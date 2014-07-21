@@ -48,7 +48,9 @@ Install : Standard (Linux/Mac)
 
 5. Clone the MatlabRenderer repo
 
-    > git clone https://github.com/chrischoy208/MatlabRenderer.git
+    ```
+    git clone https://github.com/chrischoy208/MatlabRenderer.git
+    ```
 
 6. Go to the `MatlabRenderer` folder and run `compile.m`
 
@@ -57,7 +59,9 @@ Install : Prebuild (Linux Only)
 
 1. Clone the MatlabRenderer repo
 
-    > git clone https://github.com/chrischoy208/MatlabRenderer.git
+    ```
+    git clone https://github.com/chrischoy208/MatlabRenderer.git
+    ```
     
 2. Add compile library path and runtime library path. Note that `LD_LIBRARY_PATH` is for application library search path and `LIBRARY_PATH` is for compiler library search path. If you open new command line session, you must these lines every time unless you add the ld library path to `.bashrc`
     
@@ -78,13 +82,18 @@ Other IDE (Eclipse)
 
 - Library to include
 
-> GL, GLU, osg, osgDB, osgGA, osgViewer, osgUtil, boost_program_options
+    ```
+    GL, GLU, osg, osgDB, osgGA, osgViewer, osgUtil, boost_program_options
+    ```
 
 - If you installed OSG on `/usr/local/lib` (which is default)
 go to `Run Configuration`, add Environment variable `LD_LIBRARY_PATH` and value `/usr/local/lib64`
 
 - Compile
-g++ -o MatlabRenderer MatlabRenderer.cpp -lGL -losg -losgViewer -losgDB -losgGA -losgUtil -lboost_program_options -O3
+    
+    ```
+    g++ -o MatlabRenderer MatlabRenderer.cpp -lGL -losg -losgViewer -losgDB -losgGA -losgUtil -lboost_program_options -O3
+    ```
 
 
 Usage
@@ -93,10 +102,30 @@ Usage
 ```
 % Initialize the Matlab object.
 renderer = Renderer();
-renderer.initialize('Honda-Accord.3ds',700,700,45,0,0,0,25);
+renderingSizeX = 700 % pixels
+renderingSizeY = 700 % pixels
+azimuth = 90;
+elevation = 45;
+yaw = 0;
+distance = 0;
+fieldOfView = 25;
+renderer.initialize('Honda-Accord.3ds',...
+    renderingSizeX,...
+    renderingSizeY,...
+    azimuth,...
+    elevation,...
+    yaw,...
+    distance, 
+    fieldOfView);
+
+% If the output is only the rendering, it renders more efficiently
+[rendering]= renderer.render();
+
+% Once you initialize, you can just set the viewpoint and render without loading CAD model again.
 renderer.setViewpoint(az,el,yaw,0,fov);
 [rendering]= renderer.render();
 
+% If you give the second output, it renders depth too.
 [rendering, depth]= renderer.render();
 subplot(121);imagesc(rendering);
 subplot(122);imagesc(depth);
