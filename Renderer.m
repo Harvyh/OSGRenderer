@@ -21,7 +21,7 @@ end
 
 methods
   function this = Renderer()
-  %DATABASE Create a new database.
+  %Renderer Create a new database.
     this.id_ = Renderer_('new');
   end
 
@@ -30,21 +30,22 @@ methods
     Renderer_('delete', this.id_);
   end
 
-  function initialize(this, filename, screenWidth, screenHeight, azimuth, elevation, yaw, distance, fieldOfView)
-  %PUT Save something to the database.
+  function success = initialize(this, filename, screenWidth, screenHeight, azimuth, elevation, yaw, distance, fieldOfView)
+  %Initialize initialize renderer.
     assert(isscalar(this));
     offScreen = 1;
-    Renderer_('initialize', this.id_, filename, offScreen, screenWidth, screenHeight, azimuth, elevation, yaw, distance, fieldOfView);
+    success = Renderer_('initialize', this.id_, filename, offScreen, screenWidth, screenHeight, azimuth, elevation, yaw, distance, fieldOfView);
   end
   
-  function setViewport(this, screenWidth, screenHeight)
-  %PUT Save something to the database.
-    assert(isscalar(this));
-    Renderer_('setViewport', this.id_, screenWidth, screenHeight);
-  end
+  % Setting viewport is not supported once the viewport is created.
+  % function setViewport(this, screenWidth, screenHeight)
+  % %SetViewport .
+  %   assert(isscalar(this));
+  %   Renderer_('setViewport', this.id_, screenWidth, screenHeight);
+  % end
   
   function setViewpoint(this, az, el, yaw, dist, fov)
-  %PUT Save something to the database.
+  %setViewpoint set azimuth elevation yaw distance and field of view (view angle)
     assert(isscalar(this));
     Renderer_('setViewpoint', this.id_, az, el, yaw, dist, fov);
   end
@@ -58,6 +59,24 @@ methods
       [rendering, depth] = Renderer_('render', this.id_);
     end
   end
-end
 
+  function [cropRendering] = renderCrop(this)
+  % render image and crop tightly
+    assert(isscalar(this));
+    [rendering, depth] = Renderer_('render', this.id_);
+    rowIdx = find(sum(depth,1) > 0);
+    colIdx = find(sum(depth,2) > 0);
+    minRowI = min(rowIdx);
+    maxRowI = max(rowIdx);
+    minColI = min(colIdx);
+    maxColI = max(colIdx);
+
+    x1 = minRowI;
+    x2 = maxRowI;
+    y1 = minColI;
+    y2 = maxColI;
+
+    cropRendering = rendering(y1:y2,x1:x2,:);
+  end
+end
 end

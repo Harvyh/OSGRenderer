@@ -5,13 +5,13 @@ end
 clear;
 compile;
 renderer = Renderer();
-renderer.initialize('Honda-Accord-3_millimeter.3ds',700,700,45,0,0,0,25)
-% [rendering, depth]= renderer.render();
-% subplot(121);imagesc(rendering);
-% subplot(122);imagesc(depth);
+renderer.initialize('Honda-Accord.3ds',700,700,45,0,0,0,25)
+[rendering, depth]= renderer.render();
+subplot(121);imagesc(rendering);
+subplot(122);imagesc(depth);
 
-
-timeit(@() renderer.render())
+% For matlab version > 2012, measure how long it takes
+% timeit(@() renderer.render())
 
 el = 30;
 yaw = 0;
