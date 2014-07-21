@@ -8,7 +8,7 @@
 
 if isunix && ~ismac
   system('rm Renderer_.mexa64');
-  make('all','-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil');
+  make('all','-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I./OSG/include');
 end
 
 % For mac
