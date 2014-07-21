@@ -86,7 +86,7 @@ Other IDE (Eclipse)
     GL, GLU, osg, osgDB, osgGA, osgViewer, osgUtil, boost_program_options
     ```
 
-- If you installed OSG on `/usr/local/lib` (which is default)
+- If you installed OSG on `/usr/local/lib64` (which is default)
 go to `Run Configuration`, add Environment variable `LD_LIBRARY_PATH` and value `/usr/local/lib64`
 
 - Compile
