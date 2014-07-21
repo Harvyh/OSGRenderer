@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 OSG Offscreen Renderer
 ======================
 
@@ -7,3 +8,7 @@ TODO
 -----
 
 - fix yaw
+=======
+MatlabRenderer
+==============
+>>>>>>> a79522dc61c3b0f6aed828ffffb732236e372a36
