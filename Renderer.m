@@ -53,14 +53,14 @@ methods
   function [rendering, depth] = render(this)
   %QUERY Query something to the database.
     assert(isscalar(this));
-    if nargout == 1
-      rendering = Renderer_('render', this.id_);
-    else
+    if nargout > 1
       [rendering, depth] = Renderer_('render', this.id_);
+    else
+      rendering = Renderer_('render', this.id_);
     end
   end
 
-  function [cropRendering] = renderCrop(this)
+  function [cropRendering, cropDepth] = renderCrop(this)
   % render image and crop tightly
     assert(isscalar(this));
     [rendering, depth] = Renderer_('render', this.id_);
@@ -77,6 +77,9 @@ methods
     y2 = maxColI;
 
     cropRendering = rendering(y1:y2,x1:x2,:);
+    if nargout > 1
+      cropDepth = depth(y1:y2,x1:x2,:);
+    end
   end
 end
 end

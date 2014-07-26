@@ -1,10 +1,10 @@
-Matlab Renderer
-==============
+Matlab Offscreen Renderer
+=========================
 
 [TOC]
 
 
-Efficient Matlab Rendering engine using [OpenSceneGraph 3](https://github.com/openscenegraph/osg) and [Mexplus](https://github.com/kyamagu/mexplus). The Matlab wrapper holds the C++ object instance and returns rendering whenever the Matlab wrapper object requests it. It is more since you do not load a CAD model every time you render it. 
+Efficient Matlab Wrapper for Offscreen Rendering engine using [OpenSceneGraph 3](https://github.com/openscenegraph/osg) and [Mexplus](https://github.com/kyamagu/mexplus). The Matlab wrapper holds the C++ object instance and returns rendering whenever the Matlab wrapper object requests it. It is more since you do not load a CAD model every time you render it. 
 
 There are two modes for installation. One that does not require OSG installation which is recommended and the one that works without OSG installation.
 
@@ -109,14 +109,18 @@ elevation = 45;
 yaw = 0;
 distance = 0;
 fieldOfView = 25;
-renderer.initialize('Honda-Accord.3ds',...
-    renderingSizeX,...
-    renderingSizeY,...
-    azimuth,...
-    elevation,...
-    yaw,...
-    distance, 
-    fieldOfView);
+
+% Initialize the rederer by loading CAD model
+if ~renderer.initialize('Honda-Accord.3ds',...
+	    renderingSizeX,...
+	    renderingSizeY,...
+	    azimuth,...
+	    elevation,...
+	    yaw,...
+	    distance, 
+	    fieldOfView);
+    error('Fail to initialize');
+end
 
 % If the output is only the rendering, it renders more efficiently
 [rendering]= renderer.render();
@@ -137,5 +141,12 @@ renderer.delete();
 Example 
 
 ![](https://dl.dropboxusercontent.com/u/57360783/MatlabRenderer/rendering.png)
+
+
+Input CAD format
+----------------
+
+List of available formats 
+http://trac.openscenegraph.org/projects/osg//wiki/Support/UserGuides/Plugins
 
 > Written with [StackEdit](https://stackedit.io/).
