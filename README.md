@@ -67,8 +67,8 @@ Install : Prebuild (Linux Only)
     
     ```
     cd MatlabRenderer
-    export LIBRARY_PATH=LIBRARY_PATH:./OSG/lib
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./OSG/lib
+    export LIBRARY_PATH=LIBRARY_PATH:path/to/MatlabRenderer/OSG/lib
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:path/to/MatlabRenderer/OSG/lib
     ```
     
 3. Run matlab
