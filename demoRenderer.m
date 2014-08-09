@@ -15,9 +15,7 @@ subplot(122);imagesc(depth);
 
 el = 30;
 yaw = 0;
-if ismac
-  yaw = 180;
-end
+
 % renderer.setViewport(400,400);
 for az = 0:180
   for fov = 15:10:65

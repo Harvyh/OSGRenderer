@@ -11,7 +11,7 @@ if isunix && ~ismac
   make('all','-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I./OSG/include');
 end
 
-% For mac
+% For mac g++
 %
 % 1. add -framework OpenGL
 % 
@@ -28,7 +28,17 @@ end
 % 2. change mexopts.sh and add '-std=c++11' to CXXFLAGS
 % 3. make('all','-I/usr/local/include -losg -losgDB -losgGA -losgViewer -losgUtil -lOpenThreads');
 
-if ismac
+% For mac clang
+%
+% make('all','-v CXXFLAGS=''$CXXFLAGS -stdlib=libc++ -std=gnu++11''','-I/usr/local/include -L/usr/local/lib -lc++ -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
+
+
+if ismac && verLessThan('matlab', '8.0.1')
   system('rm Renderer_.mexmaci64');
   make('all','-I/usr/local/include -L/usr/local/lib -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
+else
+  system('rm Renderer_.mexmaci64');
+  make('all','-v CXXFLAGS=''$CXXFLAGS -stdlib=libc++ -std=gnu++11''','-I/usr/local/include -L/usr/local/lib -lc++ -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
 end
+
+

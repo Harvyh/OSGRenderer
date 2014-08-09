@@ -49,7 +49,7 @@ Install : Standard (Linux/Mac)
 5. Clone the MatlabRenderer repo
 
     ```
-    git clone https://github.com/chrischoy208/MatlabRenderer.git
+    git clone https://github.com/chrischoy/MatlabRenderer.git
     ```
 
 6. Go to the `MatlabRenderer` folder and run `compile.m`
@@ -60,7 +60,7 @@ Install : Prebuild (Linux Only)
 1. Clone the MatlabRenderer repo
 
     ```
-    git clone https://github.com/chrischoy208/MatlabRenderer.git
+    git clone https://github.com/chrischoy/MatlabRenderer.git
     ```
     
 2. Add compile library path and runtime library path. Note that `LD_LIBRARY_PATH` is for application library search path and `LIBRARY_PATH` is for compiler library search path. If you open new command line session, you must these lines every time unless you add the ld library path to `.bashrc`
@@ -109,18 +109,14 @@ elevation = 45;
 yaw = 0;
 distance = 0;
 fieldOfView = 25;
-
-% Initialize the rederer by loading CAD model
-if ~renderer.initialize('Honda-Accord.3ds',...
-	    renderingSizeX,...
-	    renderingSizeY,...
-	    azimuth,...
-	    elevation,...
-	    yaw,...
-	    distance, 
-	    fieldOfView);
-    error('Fail to initialize');
-end
+renderer.initialize('Honda-Accord.3ds',...
+    renderingSizeX,...
+    renderingSizeY,...
+    azimuth,...
+    elevation,...
+    yaw,...
+    distance, 
+    fieldOfView);
 
 % If the output is only the rendering, it renders more efficiently
 [rendering]= renderer.render();
@@ -148,5 +144,15 @@ Input CAD format
 
 List of available formats 
 http://trac.openscenegraph.org/projects/osg//wiki/Support/UserGuides/Plugins
+
+
+TODO
+----
+
+1. Windows installation
+
+2. Add dylib for prebuilt OS X
+
+- http://stackoverflow.com/questions/3146274/is-it-ok-to-use-dyld-library-path-on-mac-os-x-and-whats-the-dynamic-library-s
 
 > Written with [StackEdit](https://stackedit.io/).
