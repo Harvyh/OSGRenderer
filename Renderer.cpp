@@ -103,6 +103,7 @@ bool Renderer::initialize(std::string fileName,
 	}
 	traits->sharedContext = 0;
 	// traits->alpha = 8;
+	std::cout << "DisplayName : " << traits->displayName() << std::endl;
 	traits->readDISPLAY();
 
 	osg::GraphicsContext* _gc = osg::GraphicsContext::createGraphicsContext(traits.get());
@@ -165,7 +166,7 @@ void Renderer::render(unsigned char * _rendering, double * _depth){
 		viewer->setDone(false);
 		viewer->frame();
 		do{
-			std::cout<<"Renderer : Rendering..."<<std::endl;
+			// std::cout<<"Renderer : Rendering..."<<std::endl;
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}while(!viewer->done());
 	}

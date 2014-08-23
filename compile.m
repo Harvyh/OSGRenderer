@@ -32,13 +32,14 @@ end
 %
 % make('all','-v CXXFLAGS=''$CXXFLAGS -stdlib=libc++ -std=gnu++11''','-I/usr/local/include -L/usr/local/lib -lc++ -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
 
-
-if ismac && verLessThan('matlab', '8.0.1')
-  system('rm Renderer_.mexmaci64');
-  make('all','-I/usr/local/include -L/usr/local/lib -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
-else
-  system('rm Renderer_.mexmaci64');
-  make('all','-v CXXFLAGS=''$CXXFLAGS -stdlib=libc++ -std=gnu++11''','-I/usr/local/include -L/usr/local/lib -lc++ -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
+if ismac
+  if verLessThan('matlab', '8.0.1')
+    system('rm Renderer_.mexmaci64');
+    make('all','-I/usr/local/include -L/usr/local/lib -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
+  else
+    system('rm Renderer_.mexmaci64');
+    make('all','-v CXXFLAGS=''$CXXFLAGS -stdlib=libc++ -std=gnu++11''','-I/usr/local/include -L/usr/local/lib -lc++ -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
+  end
 end
 
 
