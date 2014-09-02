@@ -6,12 +6,18 @@
 % 1. change mexopts.sh and add '-std=c++11' to CXXFLAGS
 % 2. make('all','-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil');
 
-if isunix && ~ismac
-  system('rm Renderer_.mexa64');
-  make('all','-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I./OSG/include');
+if DEBUG
+    DEBUG_FLAG = 'debug';
+else
+    DEBUG_FLAG = 'all';
 end
 
-% For mac g++
+if isunix && ~ismac
+  system('rm Renderer_.mexa64');
+  make(DEBUG_FLAG,'-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I./OSG/include');
+end
+
+% For mac llvm
 %
 % 1. add -framework OpenGL
 % 
@@ -35,10 +41,10 @@ end
 if ismac
   if verLessThan('matlab', '8.0.1')
     system('rm Renderer_.mexmaci64');
-    make('all','-I/usr/local/include -L/usr/local/lib -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
+    make(DEBUG_FLAG,'-I/usr/local/include -L/usr/local/lib -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
   else
     system('rm Renderer_.mexmaci64');
-    make('all','-v CXXFLAGS=''$CXXFLAGS -stdlib=libc++ -std=gnu++11''','-I/usr/local/include -L/usr/local/lib -lc++ -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
+    make(DEBUG_FLAG,'-v CXXFLAGS=''$CXXFLAGS -stdlib=libc++ -std=gnu++11''','-I/usr/local/include -L/usr/local/lib -lc++ -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
   end
 end
 

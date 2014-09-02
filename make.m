@@ -17,6 +17,9 @@ function make(command, varargin)
   if nargin < 1, command = 'all'; end
   root_dir = fileparts(mfilename('fullpath'));
   switch command
+    case 'debug'
+      targets = [getTarget(root_dir)];
+      arrayfun(@(target)buildDebug(target, varargin{:}), targets);
     case 'all'
 %      targets = [getTarget(root_dir), getTestTargets(root_dir)];
       targets = [getTarget(root_dir)];
@@ -49,6 +52,20 @@ function target = getTarget(root_dir)
       }}, ...
     'options', sprintf('-I''%s''', fullfile(root_dir, 'include')) ...
     );
+end
+
+function buildDebug(target, varargin)
+%BUILDTARGET Build a single target.
+  if skipBuild(target)
+    return;
+  end
+  command = sprintf('mex -g%s -output ''%s'' %s%s', ...
+                    sprintf(' ''%s''', target.sources{:}), ...
+                    target.name, ...
+                    target.options, ...
+                    sprintf(' %s', varargin{:}));
+  disp(command);
+  eval(command);
 end
 
 function buildTarget(target, varargin)

@@ -25,6 +25,16 @@ Renderer::~Renderer() {
 //	std::cout<<"Viewport set"<<std::endl;
 //	viewer->getCamera()->setViewport(0, 0, screenWidth, screenHeight);
 //}
+void Renderer::setModelIndex(int _model_index){
+    current_model_index = _model_index;
+    for(int model_index = 0; model_index < loadedModels.size(); model_index++){
+        loadedModels[model_index]->setNodeMask(model_index == current_model_index ? 0xffffffff : 0x0); 
+    }
+}
+
+// void Renderer::setViewpoint(double _azimuth, double _elevation, double _yaw, double _distance, double _fieldOfView){
+//    setViewpoint(_azimuth, _elevation, _yaw, _distance, _fieldOfView, current_model_index);
+//}
 
 void Renderer::setViewpoint(double _azimuth, double _elevation, double _yaw, double _distance, double _fieldOfView){
 	azimuth = _azimuth;
@@ -40,18 +50,18 @@ void Renderer::setViewpoint(double _azimuth, double _elevation, double _yaw, dou
 	osg::Vec3 offset = rotz * rotx * osg::Vec3(0., -1., 0.);
 
 	if (distance <= 0){
-		distance = objectRadius / tan(fieldOfView * PI/360.); // fieldOfView * PI/180 / 2
+		distance = objectRadiuses[current_model_index] / tan(fieldOfView * PI/360.0f); // fieldOfView * PI/180 / 2
 	}
 
-	osg::Vec3 eye = objectCenter + osg::Vec3( distance * offset.x(), distance * offset.y(), distance * offset.z()) ;
+	osg::Vec3 eye = objectCenters[current_model_index] + osg::Vec3( distance * offset.x(), distance * offset.y(), distance * offset.z()) ;
 	osg::Vec3 up = rotz * roty * osg::Vec3(0.0f, 0.0f, 1.0f);
-	osg::Matrix m = osg::Matrix::lookAt(eye, objectCenter, up);
+	osg::Matrix m = osg::Matrix::lookAt(eye, objectCenters[current_model_index], up);
 
 	viewer->getCamera()->setViewMatrix( m );
 	viewer->getCamera()->setProjectionMatrixAsPerspective( (fieldOfView <= 0)?25:fieldOfView, 1, 1 ,100000);
 }
 
-bool Renderer::initialize(std::string fileName,
+bool Renderer::initialize(std::vector<std::string> fileNames,
 		bool _offScreen,
 		int _screenWidth,
 		int _screenHeight,
@@ -64,25 +74,27 @@ bool Renderer::initialize(std::string fileName,
 	screenHeight = _screenHeight;
 
 	offScreen = _offScreen;
-    loadedModel = osgDB::readNodeFile(fileName);
+    
+    osgUtil::Optimizer optimizer;
+    osgUtil::Optimizer::TextureVisitor tv(true, false, false, false, false, false);
+    osgUtil::SmoothingVisitor sv;
+   
+    for (int fileIndex = 0; fileIndex < fileNames.size(); fileIndex++){
+        loadedModels.push_back(osgDB::readNodeFile(fileNames[fileIndex]));
+    	// Fail to load object
+    	if (!loadedModels[fileIndex]){
+    		std::cout<<"Cannot load the model : " << fileNames[fileIndex] << std::endl;
+    		return false;
+    	}
+        
+        optimizer.optimize(loadedModels[fileIndex].get());
+        loadedModels[fileIndex]->accept(tv);
+        // Smooth faces
+        loadedModels[fileIndex]->accept(sv);
+    }
 
-	// Fail to load object
-	if (!loadedModel){
-		std::cout<<"Cannot load the model : " << fileName << std::endl;
-		return false;
-	}
     std::cout<<"Model Loaded"<<std::endl;
 
-    osgUtil::Optimizer optimizer;
-    optimizer.optimize(loadedModel.get());
-    
-    osgUtil::Optimizer::TextureVisitor tv(true, false, false, false, false, false);
-	loadedModel->accept(tv);
-    
-    // Smooth faces
-    osgUtil::SmoothingVisitor sv;
-    loadedModel->accept(sv);
-    
 //    ShadeModelVisitor smv;
 //    loadedModel->accept(smv);
 
@@ -126,7 +138,9 @@ bool Renderer::initialize(std::string fileName,
 	viewer->getCamera()->getView()->setLightingMode(osg::View::HEADLIGHT);
 
 	sceneRoot = new osg::Group;
-	sceneRoot->addChild(loadedModel);
+	for(int modelIndex = 0; modelIndex < loadedModels.size(); modelIndex++){
+        sceneRoot->addChild(loadedModels[modelIndex]);
+    }
 
 	//	osg::ref_ptr<osg::Light> light = new osg::Light;
 	//	osg::ref_ptr<osg::LightSource> lightSource = new osg::LightSource;
@@ -142,11 +156,13 @@ bool Renderer::initialize(std::string fileName,
 	//          Set camera 								 //
 	///////////////////////////////////////////////////////
     
-	boundingSphere = loadedModel->getBound();
+	for(int modelIndex = 0; modelIndex < loadedModels.size(); modelIndex++){
+	    boundingSpheres.push_back( loadedModels[modelIndex]->getBound() );
+    	objectCenters.push_back( boundingSpheres[modelIndex].center() );
+    	objectRadiuses.push_back( boundingSpheres[modelIndex].radius() );
+    }
 
-	objectCenter = boundingSphere.center();
-	objectRadius = boundingSphere.radius();
-
+    setModelIndex(0);
 	setViewpoint(_azimuth, _elevation, _yaw, _distance, _fieldOfView);
 	viewer->setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
 	viewer->setUpThreading();

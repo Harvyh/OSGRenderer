@@ -30,11 +30,11 @@ methods
     Renderer_('delete', this.id_);
   end
 
-  function success = initialize(this, filename, screenWidth, screenHeight, azimuth, elevation, yaw, distance, fieldOfView)
+  function success = initialize(this, filenames, screenWidth, screenHeight, azimuth, elevation, yaw, distance, fieldOfView)
   %Initialize initialize renderer.
     assert(isscalar(this));
     offScreen = 1;
-    success = Renderer_('initialize', this.id_, filename, offScreen, screenWidth, screenHeight, azimuth, elevation, yaw, distance, fieldOfView);
+    success = Renderer_('initialize', this.id_, filenames, offScreen, screenWidth, screenHeight, azimuth, elevation, yaw, distance, fieldOfView);
   end
   
   % Setting viewport is not supported once the viewport is created.
@@ -48,6 +48,11 @@ methods
   %setViewpoint set azimuth elevation yaw distance and field of view (view angle)
     assert(isscalar(this));
     Renderer_('setViewpoint', this.id_, az, el, yaw, dist, fov);
+  end
+
+  function setModelIndex(this, modelIndex)
+    assert(isscalar(this))
+    Renderer_('setModelIndex', this.id_, modelIndex);
   end
   
   function [rendering, depth] = render(this)

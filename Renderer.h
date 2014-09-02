@@ -8,6 +8,7 @@
 #ifndef RENDERER_H_
 #define RENDERER_H_
 
+#include <vector>
 #include <chrono>
 #include <thread>
 
@@ -36,7 +37,7 @@ class Renderer {
 protected:
 	// Scene data
 	osg::ref_ptr<osg::Group> sceneRoot;
-	osg::ref_ptr<osg::Node> loadedModel;
+    std::vector<osg::ref_ptr<osg::Node>> loadedModels;
 	osg::ref_ptr<osgViewer::Viewer> viewer;
 
 public:
@@ -47,27 +48,41 @@ public:
 	// Camera related variables
 	int screenWidth;
 	int screenHeight;
-	double azimuth;
+	
+    unsigned int current_model_index;
+
+    double azimuth;
 	double elevation;
 	double yaw;
 	double distance;
 	double fieldOfView;
 
 	// Object related variables
-	osg::BoundingSphere boundingSphere;
-	double objectRadius;
-	osg::Vec3 objectCenter;
+    std::vector<osg::BoundingSphere> boundingSpheres;
+    std::vector<double> objectRadiuses;
+    std::vector<osg::Vec3> objectCenters;
 
 	Renderer();
 	static void flipRendering(GLubyte *imageInput, int gWidth , int gHeight, GLubyte *imageOutput);
 	static void flipDepth(float * depthInput, int gWidth, int gHeight, double * depthOutput);
+
 //	void setViewport(int _screenWidth, int _screenHeight);
 	void setViewpoint(double _azimuth,
 			double _elevation,
 			double _yaw,
 			double _distance,
 			double _fieldOfView);
-	bool initialize(std::string fileName,
+
+//    void setViewpoint(double _azimuth,
+//			double _elevation,
+//			double _yaw,
+//			double _distance,
+//			double _fieldOfView,
+//            int _model_index);
+
+    void setModelIndex(int _modelIndex);
+
+	bool initialize(std::vector<std::string> fileNames,
 			bool offScreen,
 			int _screenWidth,
 			int _screenHeight,
@@ -76,6 +91,7 @@ public:
 			double _yaw,
 			double _distance,
 			double _fieldOfView);
+
 	void render(unsigned char* rendering, double * depth);
 
 	virtual ~Renderer();
@@ -158,36 +174,42 @@ namespace {
 // Create a new instance of Renderer and return its session id.
 MEX_DEFINE(new) (int nlhs, mxArray* plhs[],
                  int nrhs, const mxArray* prhs[]) {
-  InputArguments input(nrhs, prhs, 0);
-  OutputArguments output(nlhs, plhs, 1);
-  output.set(0, Session<CLR::Renderer>::create(new CLR::Renderer()));
+    InputArguments input(nrhs, prhs, 0);
+    OutputArguments output(nlhs, plhs, 1);
+    output.set(0, Session<CLR::Renderer>::create(new CLR::Renderer()));
 }
 
 // Delete the Renderer instance specified by its id.
 MEX_DEFINE(delete) (int nlhs, mxArray* plhs[],
                     int nrhs, const mxArray* prhs[]) {
-  InputArguments input(nrhs, prhs, 1);
-  OutputArguments output(nlhs, plhs, 0);
-  Session<CLR::Renderer>::destroy(input.get(0));
+    InputArguments input(nrhs, prhs, 1);
+    OutputArguments output(nlhs, plhs, 0);
+    Session<CLR::Renderer>::destroy(input.get(0));
 }
 
 // Initialize the renderer
 MEX_DEFINE(initialize) (int nlhs, mxArray* plhs[],
                     int nrhs, const mxArray* prhs[]) {
-  InputArguments input(nrhs, prhs, 10); // 1 for id and 9 for input arguments
-  OutputArguments output(nlhs, plhs, 1); // 1 for boolean success flag
-  CLR::Renderer* renderer = Session<CLR::Renderer>::get(input.get(0));
-  bool success = renderer->initialize(input.get<std::string>(1), // file name
-		  input.get<bool>(2), // off screen flag
-		  input.get<int>(3), // screen width
-		  input.get<int>(4), // screen height
-		  input.get<double>(5), // azimuth
-		  input.get<double>(6), // elevation
-		  input.get<double>(7), // yaw
-		  input.get<double>(8), // distance
-		  input.get<double>(9) // field of view
-		);
-  output.set(0, success);
+    InputArguments input(nrhs, prhs, 10); // 1 for id and 9 for input arguments
+    OutputArguments output(nlhs, plhs, 1); // 1 for boolean success flag
+    CLR::Renderer* renderer = Session<CLR::Renderer>::get(input.get(0));
+    std::vector<std::string> value = MxArray::to<std::vector<std::string> >(prhs[1]);
+ 
+    // DEBUG
+    // std::cout<<value[0]<<std::endl;
+    // END DEBUG
+    
+    bool success = renderer->initialize(value,//input.get<std::vector<std::string>>(1), // file name
+      	  input.get<bool>(2), // off screen flag
+      	  input.get<int>(3), // screen width
+      	  input.get<int>(4), // screen height
+      	  input.get<double>(5), // azimuth
+      	  input.get<double>(6), // elevation
+      	  input.get<double>(7), // yaw
+      	  input.get<double>(8), // distance
+      	  input.get<double>(9) // field of view
+      	);
+    output.set(0, success);
 }
 
 MEX_DEFINE(render) (int nlhs, mxArray* plhs[],
@@ -210,6 +232,16 @@ MEX_DEFINE(render) (int nlhs, mxArray* plhs[],
 	renderer->render(imageOutput, depthOutput);
 	output.set(0,plhs[0]);
 	if (renderDepth) output.set(1,plhs[1]);
+}
+
+
+MEX_DEFINE(setModelIndex) (int nlhs, mxArray* plhs[],
+                   int nrhs, const mxArray* prhs[]) {
+    InputArguments input(nrhs, prhs, 2);
+    OutputArguments output(nlhs, plhs, 0);
+
+    CLR::Renderer* renderer = Session<CLR::Renderer>::get(input.get(0));
+	renderer->setModelIndex(input.get<int>(1));
 }
 
 MEX_DEFINE(setViewpoint) (int nlhs, mxArray* plhs[],
