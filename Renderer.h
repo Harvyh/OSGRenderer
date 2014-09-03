@@ -37,6 +37,7 @@ class Renderer {
 protected:
 	// Scene data
 	osg::ref_ptr<osg::Group> sceneRoot;
+    std::vector<std::string> modelNames;
     std::vector<osg::ref_ptr<osg::Node>> loadedModels;
 	osg::ref_ptr<osgViewer::Viewer> viewer;
 
@@ -79,9 +80,10 @@ public:
 //			double _distance,
 //			double _fieldOfView,
 //            int _model_index);
+    std::vector<std::string> getModelNames();
 
     void setModelIndex(int _modelIndex);
-
+    bool addModel(std::string fileName);
 	bool initialize(std::vector<std::string> fileNames,
 			bool offScreen,
 			int _screenWidth,
@@ -193,13 +195,13 @@ MEX_DEFINE(initialize) (int nlhs, mxArray* plhs[],
     InputArguments input(nrhs, prhs, 10); // 1 for id and 9 for input arguments
     OutputArguments output(nlhs, plhs, 1); // 1 for boolean success flag
     CLR::Renderer* renderer = Session<CLR::Renderer>::get(input.get(0));
-    std::vector<std::string> value = MxArray::to<std::vector<std::string> >(prhs[1]);
+    std::vector<std::string> file_names = MxArray::to<std::vector<std::string> >(prhs[1]);
  
     // DEBUG
     // std::cout<<value[0]<<std::endl;
     // END DEBUG
     
-    bool success = renderer->initialize(value,//input.get<std::vector<std::string>>(1), // file name
+    bool success = renderer->initialize(file_names,//input.get<std::vector<std::string>>(1), // file name
       	  input.get<bool>(2), // off screen flag
       	  input.get<int>(3), // screen width
       	  input.get<int>(4), // screen height
@@ -234,6 +236,15 @@ MEX_DEFINE(render) (int nlhs, mxArray* plhs[],
 	if (renderDepth) output.set(1,plhs[1]);
 }
 
+MEX_DEFINE(addModel) (int nlhs, mxArray* plhs[],
+                   int nrhs, const mxArray* prhs[]) {
+    InputArguments input(nrhs, prhs, 2);
+    OutputArguments output(nlhs, plhs, 1);
+    
+    CLR::Renderer* renderer = Session<CLR::Renderer>::get(input.get(0));
+    bool success = renderer->addModel(input.get<std::string>(1));
+	output.set(0,success);
+}
 
 MEX_DEFINE(setModelIndex) (int nlhs, mxArray* plhs[],
                    int nrhs, const mxArray* prhs[]) {

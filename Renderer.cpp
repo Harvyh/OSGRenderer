@@ -84,6 +84,7 @@ bool Renderer::initialize(std::vector<std::string> fileNames,
     	// Fail to load object
     	if (!loadedModels[fileIndex]){
     		std::cout<<"Cannot load the model : " << fileNames[fileIndex] << std::endl;
+            loadedModels.clear();
     		return false;
     	}
         
@@ -91,9 +92,11 @@ bool Renderer::initialize(std::vector<std::string> fileNames,
         loadedModels[fileIndex]->accept(tv);
         // Smooth faces
         loadedModels[fileIndex]->accept(sv);
+        std::cout<<"Model Loaded:"<<fileNames[fileIndex]<<std::endl;
     }
-
-    std::cout<<"Model Loaded"<<std::endl;
+   
+    // STD deep copy
+    modelNames = fileNames;
 
 //    ShadeModelVisitor smv;
 //    loadedModel->accept(smv);
@@ -174,6 +177,29 @@ bool Renderer::initialize(std::vector<std::string> fileNames,
 	return true;
 }
 
+// Inefficient method to add a collection of models
+bool Renderer::addModel(std::string fileName){
+     
+    osgUtil::Optimizer optimizer;
+    osgUtil::Optimizer::TextureVisitor tv(true, false, false, false, false, false);
+    osgUtil::SmoothingVisitor sv;
+   
+    loadedModels.push_back(osgDB::readNodeFile(fileName));
+    	// Fail to load object
+   	if (!loadedModels.back()){
+    		std::cout<<"Cannot load the model : " << fileName << std::endl;
+            loadedModels.pop_back();
+    		return false;
+   	}
+        
+    optimizer.optimize(loadedModels.back().get());
+    loadedModels.back()->accept(tv);
+    // Smooth faces
+    loadedModels.back()->accept(sv);
+    
+    sceneRoot->addChild(loadedModels.back());
+    modelNames.push_back(fileName);
+}
 
 void Renderer::render(unsigned char * _rendering, double * _depth){
 	if (offScreen){
@@ -222,6 +248,11 @@ void Renderer::flipDepth(float * depthInput, int gWidth, int gHeight, double * d
 			depthOutput[i*gWidth+j] = 1 - depthInput[(gWidth-1-j)*gHeight+i];
 		}
 	}
+}
+
+
+std::vector<std::string> Renderer::getModelNames(){
+    return modelNames;
 }
 
 } /* namespace CLR */
