@@ -1,8 +1,9 @@
 % demo renderer
 if exist('renderer','var')
   renderer.delete();
+  clear renderer;
 end
-clear;
+
 
 DEBUG = true;
 compile;
