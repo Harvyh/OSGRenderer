@@ -82,6 +82,7 @@ public:
 //            int _model_index);
     std::vector<std::string> getModelNames();
 
+// 0 base index
     void setModelIndex(int _modelIndex);
     bool addModel(std::string fileName);
 	bool initialize(std::vector<std::string> fileNames,

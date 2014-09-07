@@ -50,9 +50,10 @@ methods
     Renderer_('setViewpoint', this.id_, az, el, yaw, dist, fov);
   end
 
+  % Matlab index base 1 to C++ base 0 indexing
   function setModelIndex(this, modelIndex)
     assert(isscalar(this))
-    Renderer_('setModelIndex', this.id_, modelIndex);
+    Renderer_('setModelIndex', this.id_, modelIndex-1);
   end
   
   function [rendering, depth] = render(this)

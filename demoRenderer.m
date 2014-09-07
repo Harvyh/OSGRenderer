@@ -14,7 +14,9 @@ if ~renderer.initialize({'Honda-Accord.3ds', 'road_bike.3ds'},700,700,45,0,0,0,2
     error('Renderer initilization failed');
 end
 
-renderer.setModelIndex(0);
+renderer.setModelIndex(1);
+renderer.setViewpoint(az,el,yaw,0,fov);
+
 [rendering, depth]= renderer.render();
 subplot(121);imagesc(rendering);
 subplot(122);imagesc(depth);
@@ -27,8 +29,8 @@ yaw = 0;
 
 % renderer.setViewport(400,400);
 
-renderer.setModelIndex(1);
-for az = 0:180
+renderer.setModelIndex(2);
+for az = 0:90:180
   for fov = 15:10:65
     renderer.setViewpoint(az,el,yaw,0,fov);
     [rendering]= renderer.render();

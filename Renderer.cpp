@@ -26,9 +26,15 @@ Renderer::~Renderer() {
 //	viewer->getCamera()->setViewport(0, 0, screenWidth, screenHeight);
 //}
 void Renderer::setModelIndex(int _model_index){
+    if ((_model_index < 0) || (_model_index > loadedModels.size())){
+        std::cout<<"Index out of bound"<<std::endl;
+        return;
+    }
+
     current_model_index = _model_index;
     for(int model_index = 0; model_index < loadedModels.size(); model_index++){
         loadedModels[model_index]->setNodeMask(model_index == current_model_index ? 0xffffffff : 0x0); 
+        //std::cout<<"Model "<< model_index << " set :"<<(model_index == current_model_index ? "visible" : "invisible") <<std::endl;
     }
 }
 
