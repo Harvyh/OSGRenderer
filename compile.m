@@ -14,6 +14,7 @@ end
 
 if isunix && ~ismac
   system('rm MultiModelRenderer_.mexa64');
+  make_multimodel(DEBUG_FLAG,'-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I./OSG/include');
   make(DEBUG_FLAG,'-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I./OSG/include');
 end
 
@@ -41,9 +42,11 @@ end
 if ismac
   if verLessThan('matlab', '8.0.1')
     system('rm MultiModelRenderer_.mexmaci64');
+    make_multimodel(DEBUG_FLAG,'-I/usr/local/include -L/usr/local/lib -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
     make(DEBUG_FLAG,'-I/usr/local/include -L/usr/local/lib -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
   else
     system('rm MultiModelRenderer_.mexmaci64');
+    make_multimodel(DEBUG_FLAG,'-v CXXFLAGS=''$CXXFLAGS -stdlib=libc++ -std=gnu++11''','-I/usr/local/include -L/usr/local/lib -lc++ -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
     make(DEBUG_FLAG,'-v CXXFLAGS=''$CXXFLAGS -stdlib=libc++ -std=gnu++11''','-I/usr/local/include -L/usr/local/lib -lc++ -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
   end
 end
