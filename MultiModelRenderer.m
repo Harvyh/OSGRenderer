@@ -1,4 +1,4 @@
-classdef Renderer < handle
+classdef MultiModelRenderer < handle
 %Renderer : MATLAB wrapper of openscenegraph rendering engine.
 %
 % This class definition gives an interface to the underlying MEX functions
@@ -20,21 +20,21 @@ properties (Access = private)
 end
 
 methods
-  function this = Renderer()
+  function this = MultiModelRenderer()
   %Renderer Create a new database.
-    this.id_ = Renderer_('new');
+    this.id_ = MultiModelRenderer_('new');
   end
 
   function delete(this)
   %DELETE Destructor.
-    Renderer_('delete', this.id_);
+    MultiModelRenderer_('delete', this.id_);
   end
 
-  function success = initialize(this, filename, screenWidth, screenHeight, azimuth, elevation, yaw, distance, fieldOfView)
+  function success = initialize(this, filenames, screenWidth, screenHeight, azimuth, elevation, yaw, distance, fieldOfView)
   %Initialize initialize renderer.
     assert(isscalar(this));
     offScreen = 1;
-    success = Renderer_('initialize', this.id_, filename, offScreen, screenWidth, screenHeight, azimuth, elevation, yaw, distance, fieldOfView);
+    success = MultiModelRenderer_('initialize', this.id_, filenames, offScreen, screenWidth, screenHeight, azimuth, elevation, yaw, distance, fieldOfView);
   end
   
   % Setting viewport is not supported once the viewport is created.
@@ -47,23 +47,29 @@ methods
   function setViewpoint(this, az, el, yaw, dist, fov)
   %setViewpoint set azimuth elevation yaw distance and field of view (view angle)
     assert(isscalar(this));
-    Renderer_('setViewpoint', this.id_, az, el, yaw, dist, fov);
+    MultiModelRenderer_('setViewpoint', this.id_, az, el, yaw, dist, fov);
+  end
+
+  % Matlab index base 1 to C++ base 0 indexing
+  function setModelIndex(this, modelIndex)
+    assert(isscalar(this))
+    MultiModelRenderer_('setModelIndex', this.id_, modelIndex-1);
   end
   
   function [rendering, depth] = render(this)
   %QUERY Query something to the database.
     assert(isscalar(this));
     if nargout > 1
-      [rendering, depth] = Renderer_('render', this.id_);
+      [rendering, depth] = MultiModelRenderer_('render', this.id_);
     else
-      rendering = Renderer_('render', this.id_);
+      rendering = MultiModelRenderer_('render', this.id_);
     end
   end
 
   function [cropRendering, cropDepth] = renderCrop(this)
   % render image and crop tightly
     assert(isscalar(this));
-    [rendering, depth] = Renderer_('render', this.id_);
+    [rendering, depth] = MultiModelRenderer_('render', this.id_);
     rowIdx = find(sum(depth,1) > 0);
     colIdx = find(sum(depth,2) > 0);
     minRowI = min(rowIdx);

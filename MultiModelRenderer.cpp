@@ -5,7 +5,7 @@
  *      Author: Christopher B. Choy
  */
 
-#include "Renderer.h"
+#include "MultiModelRenderer.h"
 
 namespace CLR {
 
