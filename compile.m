@@ -41,11 +41,9 @@ end
 if ismac
   if verLessThan('matlab', '8.0.1')
     system('rm Renderer_.mexmaci64');
-    make(DEBUG_FLAG,'-I/usr/local/include -L/usr/local/lib -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
+    make(DEBUG_FLAG,'-I/usr/local/include -L/usr/local/lib -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads');
   else
     system('rm Renderer_.mexmaci64');
-    make(DEBUG_FLAG,'-v CXXFLAGS=''$CXXFLAGS -stdlib=libc++ -std=gnu++11''','-I/usr/local/include -L/usr/local/lib -lc++ -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
+    make(DEBUG_FLAG,'-v CXXFLAGS=''$CXXFLAGS -stdlib=libc++ -std=gnu++11''','-I/usr/local/include -L/usr/local/lib -lc++ -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads');
   end
 end
-
-
