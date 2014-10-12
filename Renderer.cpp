@@ -68,31 +68,32 @@ void Renderer::setViewpoint(double _azimuth, double _elevation, double _yaw, dou
 }
 
 bool Renderer::initialize(std::vector<std::string> fileNames,
-		bool _offScreen,
-		int _screenWidth,
-		int _screenHeight,
-		double _azimuth = 0,
-		double _elevation = 0,
-		double _yaw = 0,
-		double _distance = 100,
-		double _fieldOfView = 25){
-	screenWidth = _screenWidth;
-	screenHeight = _screenHeight;
+  		bool _offScreen,
+  		int _screenWidth,
+  		int _screenHeight,
+  		double _azimuth = 0,
+  		double _elevation = 0,
+  		double _yaw = 0,
+  		double _distance = 100,
+  		double _fieldOfView = 25){
+  	screenWidth = _screenWidth;
+  	screenHeight = _screenHeight;
 
-	offScreen = _offScreen;
+  	offScreen = _offScreen;
     
     osgUtil::Optimizer optimizer;
     osgUtil::Optimizer::TextureVisitor tv(true, false, false, false, false, false);
     osgUtil::SmoothingVisitor sv;
    
     for (int fileIndex = 0; fileIndex < fileNames.size(); fileIndex++){
+        // Return NULL on failure
         loadedModels.push_back(osgDB::readNodeFile(fileNames[fileIndex]));
-    	// Fail to load object
-    	if (!loadedModels[fileIndex]){
-    		std::cout<<"Cannot load the model : " << fileNames[fileIndex] << std::endl;
+    	  // Fail to load object
+    	  if (!loadedModels[fileIndex]){
+    		    std::cout<<"Cannot load the model : " << fileNames[fileIndex] << std::endl;
             loadedModels.clear();
-    		return false;
-    	}
+    		    return false;
+    	  }
         
         optimizer.optimize(loadedModels[fileIndex].get());
         loadedModels[fileIndex]->accept(tv);
@@ -107,80 +108,80 @@ bool Renderer::initialize(std::vector<std::string> fileNames,
 //    ShadeModelVisitor smv;
 //    loadedModel->accept(smv);
 
-	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
-	traits->x = 0;
-	traits->y = 0;
-	traits->width = screenWidth;
-	traits->height = screenHeight;
-	// traits->samples = 8; // Anti aliasing
-	if (offScreen) {
-		traits->windowDecoration = false;
-		traits->doubleBuffer = true;
-		traits->pbuffer = true;
-	} else {
-		traits->windowDecoration = true;
-		traits->doubleBuffer = true;
-		traits->pbuffer = false;
-	}
-	traits->sharedContext = 0;
-	// traits->alpha = 8;
-	std::cout << "DisplayName : " << traits->displayName() << std::endl;
-	traits->readDISPLAY();
-
-	osg::GraphicsContext* _gc = osg::GraphicsContext::createGraphicsContext(traits.get());
-	// osg::DisplaySettings::instance()->setNumMultiSamples( 16 ); // Anti Aliasing
-
-	if (!_gc) {
-		osg::notify(osg::NOTICE)<< "Failed to create pbuffer, failing back to normal graphics window." << std::endl;
-		traits->pbuffer = false;
-		_gc = osg::GraphicsContext::createGraphicsContext(traits.get());
-	}
-
-	viewer->getCamera()->setGraphicsContext(_gc);
-	viewer->getCamera()->setViewport(0, 0, screenWidth, screenHeight);
-	viewer->getCamera()->setClearColor(osg::Vec4(1, 1, 1, 1));
-	viewer->getCamera()->getOrCreateStateSet()->setMode(GL_NORMALIZE, osg::StateAttribute::ON);
-
-	osg::ref_ptr<osg::Hint> persCorrect = new osg::Hint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-	viewer->getCamera()->getOrCreateStateSet()->setAttributeAndModes(persCorrect.get(),	osg::StateAttribute::ON);
-	// viewer->getCamera()->setCullingMode(osg::CullSettings::NO_CULLING);
-	viewer->getCamera()->getView()->setLightingMode(osg::View::HEADLIGHT);
-
-	sceneRoot = new osg::Group;
-	for(int modelIndex = 0; modelIndex < loadedModels.size(); modelIndex++){
-        sceneRoot->addChild(loadedModels[modelIndex]);
-    }
-
-	//	osg::ref_ptr<osg::Light> light = new osg::Light;
-	//	osg::ref_ptr<osg::LightSource> lightSource = new osg::LightSource;
-	//	light->setAmbient(osg::Vec4(1.0,1.0,1.0,1.0));
-	//	light->setDiffuse(osg::Vec4(1.0,1.0,1.0,1.0));
-	//	light->setSpecular(osg::Vec4(1,1,1,1));
-	//	lightSource->setLight(light.get());
-	//	root->addChild(lightSource.get());
-
-	viewer->setSceneData( sceneRoot.get() );
-
-	///////////////////////////////////////////////////////
-	//          Set camera 								 //
-	///////////////////////////////////////////////////////
-    
-	for(int modelIndex = 0; modelIndex < loadedModels.size(); modelIndex++){
-	    boundingSpheres.push_back( loadedModels[modelIndex]->getBound() );
-    	objectCenters.push_back( boundingSpheres[modelIndex].center() );
-    	objectRadiuses.push_back( boundingSpheres[modelIndex].radius() );
-    }
-
-    setModelIndex(0);
-	setViewpoint(_azimuth, _elevation, _yaw, _distance, _fieldOfView);
-	viewer->setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
-	viewer->setUpThreading();
-	viewer->realize();
-	if (offScreen){
-		callBack = new CaptureCB(viewer, screenWidth, screenHeight, offScreen);
-		viewer->getCamera()->setFinalDrawCallback(callBack);
-	}
-	return true;
+  	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
+  	traits->x = 0;
+  	traits->y = 0;
+  	traits->width = screenWidth;
+  	traits->height = screenHeight;
+  	// traits->samples = 8; // Anti aliasing
+  	if (offScreen) {
+  		traits->windowDecoration = false;
+  		traits->doubleBuffer = true;
+  		traits->pbuffer = true;
+  	} else {
+  		traits->windowDecoration = true;
+  		traits->doubleBuffer = true;
+  		traits->pbuffer = false;
+  	}
+  	traits->sharedContext = 0;
+  	// traits->alpha = 8;
+  	std::cout << "DisplayName : " << traits->displayName() << std::endl;
+  	traits->readDISPLAY();
+  
+  	osg::GraphicsContext* _gc = osg::GraphicsContext::createGraphicsContext(traits.get());
+  	// osg::DisplaySettings::instance()->setNumMultiSamples( 16 ); // Anti Aliasing
+  
+  	if (!_gc) {
+  		osg::notify(osg::NOTICE)<< "Failed to create pbuffer, failing back to normal graphics window." << std::endl;
+  		traits->pbuffer = false;
+  		_gc = osg::GraphicsContext::createGraphicsContext(traits.get());
+  	}
+  
+  	viewer->getCamera()->setGraphicsContext(_gc);
+  	viewer->getCamera()->setViewport(0, 0, screenWidth, screenHeight);
+  	viewer->getCamera()->setClearColor(osg::Vec4(1, 1, 1, 1));
+  	viewer->getCamera()->getOrCreateStateSet()->setMode(GL_NORMALIZE, osg::StateAttribute::ON);
+  
+  	osg::ref_ptr<osg::Hint> persCorrect = new osg::Hint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+  	viewer->getCamera()->getOrCreateStateSet()->setAttributeAndModes(persCorrect.get(),	osg::StateAttribute::ON);
+  	// viewer->getCamera()->setCullingMode(osg::CullSettings::NO_CULLING);
+  	viewer->getCamera()->getView()->setLightingMode(osg::View::HEADLIGHT);
+  
+  	sceneRoot = new osg::Group;
+  	for(int modelIndex = 0; modelIndex < loadedModels.size(); modelIndex++){
+          sceneRoot->addChild(loadedModels[modelIndex]);
+      }
+  
+  	//	osg::ref_ptr<osg::Light> light = new osg::Light;
+  	//	osg::ref_ptr<osg::LightSource> lightSource = new osg::LightSource;
+  	//	light->setAmbient(osg::Vec4(1.0,1.0,1.0,1.0));
+  	//	light->setDiffuse(osg::Vec4(1.0,1.0,1.0,1.0));
+  	//	light->setSpecular(osg::Vec4(1,1,1,1));
+  	//	lightSource->setLight(light.get());
+  	//	root->addChild(lightSource.get());
+  
+  	viewer->setSceneData( sceneRoot.get() );
+  
+  	///////////////////////////////////////////////////////
+  	//          Set camera 								 //
+  	///////////////////////////////////////////////////////
+      
+  	for(int modelIndex = 0; modelIndex < loadedModels.size(); modelIndex++){
+  	    boundingSpheres.push_back( loadedModels[modelIndex]->getBound() );
+      	objectCenters.push_back( boundingSpheres[modelIndex].center() );
+      	objectRadiuses.push_back( boundingSpheres[modelIndex].radius() );
+      }
+  
+      setModelIndex(0);
+  	setViewpoint(_azimuth, _elevation, _yaw, _distance, _fieldOfView);
+  	viewer->setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
+  	viewer->setUpThreading();
+  	viewer->realize();
+  	if (offScreen){
+  		callBack = new CaptureCB(viewer, screenWidth, screenHeight, offScreen);
+  		viewer->getCamera()->setFinalDrawCallback(callBack);
+  	}
+  	return true;
 }
 
 // Inefficient method to add a collection of models

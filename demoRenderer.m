@@ -1,3 +1,5 @@
+startup;
+
 % demo renderer
 if exist('renderer','var')
   renderer.delete();
@@ -5,17 +7,17 @@ if exist('renderer','var')
 end
 
 
-DEBUG = true;
+DEBUG = false;
 compile;
 
 %%%%%%%%%%% Start making Rendering engine %%%%%%%%%%
 renderer = Renderer();
-if ~renderer.initialize({'Honda-Accord.3ds', 'road_bike.3ds'},700,700,45,0,0,0,25)
+if ~renderer.initialize({'mesh/Honda-Accord.3ds', 'mesh/road_bike.3ds'},700,700,45,0,0,0,25)
     error('Renderer initilization failed');
 end
 
 renderer.setModelIndex(1);
-renderer.setViewpoint(az,el,yaw,0,fov);
+renderer.setViewpoint(0,20,0,0,25);
 
 [rendering, depth]= renderer.render();
 subplot(121);imagesc(rendering);

@@ -33,8 +33,12 @@ methods
   function success = initialize(this, filenames, screenWidth, screenHeight, azimuth, elevation, yaw, distance, fieldOfView)
   %Initialize initialize renderer.
     assert(isscalar(this));
+    assert(~isempty(filenames));
     offScreen = 1;
     success = Renderer_('initialize', this.id_, filenames, offScreen, screenWidth, screenHeight, azimuth, elevation, yaw, distance, fieldOfView);
+    if (~success)
+        disp('Fail to initialize');
+    end
   end
   
   % Setting viewport is not supported once the viewport is created.
