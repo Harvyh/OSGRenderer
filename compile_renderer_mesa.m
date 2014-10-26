@@ -1,25 +1,17 @@
-function compile_renderer_mesa(OSG_PATH, MESA_PATH)
-OSG_PATH = 'OSG';
-MESA_PATH = 'Mesa-7.0.3';
+function compile_renderer_mesa(MESA)                                                                                                                                                    
+OSG_LIB_PATH = 'lib/osg';
+OSG_INC_PATH = 'include/osg';
+MESA_LIB_PATH = 'lib/mesa';
+MESA_INC_PATH = 'include/mesa';
 
-cmd='mex Renderer.cpp -v -lGL -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lGLU -Iinclude';
+cmd='mex  Renderer.cpp -output ''bin/Renderer_'' -v -lGL -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lGLU -Iinclude';
 
 if ismac
   cmd = [ cmd ' CXXFLAGS=''$CXXFLAGS -stdlib=libc++ -std=gnu++11''' ];
 end
 
-if exist('OSG_PATH','var') && ~isempty(OSG_PATH)
-    libpath=fullfile(OSG_PATH,'lib');
-    lib64path=fullfile(OSG_PATH,'lib');
-    incpath=fullfile(OSG_PATH,'include');
-    cmd=[cmd sprintf(' -L%s -L%s -I%s',libpath,lib64path,incpath)];
-end
-
-if exist('MESA_PATH','var') && ~isempty(MESA_PATH)
-    % GLPATH='Mesa-7.0.3';
-    GLincpath=fullfile(MESA_PATH,'include');
-    GLlibpath=fullfile(MESA_PATH,'lib64');
-    cmd=[cmd sprintf(' -L%s -I%s',GLlibpath,GLincpath)];
+if exist('OSG_LIB_PATH','var')
+    cmd=[cmd sprintf(' -L%s -L%s -I%s -I%s',OSG_LIB_PATH,MESA_LIB_PATH,OSG_INC_PATH,MESA_INC_PATH)];
 end
 
 fprintf('Executing %s\n',cmd);
