@@ -6,13 +6,15 @@ if exist('renderer','var')
   clear renderer;
 end
 
+ldpath = getenv('LD_LIBRARY_PATH');
+setenv('LD_LIBRARY_PATH',['/usr/local/lib64/:', ldpath]);
 
 DEBUG = false;
 compile;
 
 %%%%%%%%%%% Start making Rendering engine %%%%%%%%%%
 renderer = Renderer();
-if ~renderer.initialize({'mesh/Honda-Accord.3ds', 'mesh/road_bike.3ds'},700,700,45,0,0,0,25)
+if ~renderer.initialize({'mesh/Honda-Accord.3ds', 'mesh/road_bike.3ds', 'mesh/untitled.dae'},700,700,45,0,0,0,25)
     error('Renderer initilization failed');
 end
 
@@ -31,7 +33,7 @@ yaw = 0;
 
 % renderer.setViewport(400,400);
 
-renderer.setModelIndex(2);
+renderer.setModelIndex(3);
 for az = 0:90:180
   for fov = 15:10:65
     renderer.setViewpoint(az,el,yaw,0,fov);

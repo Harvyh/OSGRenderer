@@ -5,6 +5,9 @@
 % 
 % 1. change mexopts.sh and add '-std=c++11' to CXXFLAGS
 % 2. make('all','-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil');
+if ~exist('DEBUG','var')
+    DEBUG = false;
+end
 
 if DEBUG
     DEBUG_FLAG = 'debug';
@@ -12,25 +15,17 @@ else
     DEBUG_FLAG = 'all';
 end
 
+% Set library path
+setenv('LIBRARY_PATH','/usr/local/lib64/');
+
 if isunix && ~ismac
   system('rm bin/Renderer_.mexa64');
-  make(DEBUG_FLAG,'-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I./OSG/include');
+  make(DEBUG_FLAG,'-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I./include/osg/ -L./lib/osg/ -L./lib/mesa/');
 end
 
 % For mac llvm
 %
-% 1. add -framework OpenGL
-% 
-% TMW_ROOT="$MATLAB"
-%     MFLAGS=''
-%     if [ "$ENTRYPOINT" = "mexLibrary" ]; then
-%         MLIBS="-L$TMW_ROOT/bin/$Arch -lmx -lmex -lmat -lmwservices -lut -framework OpenGL"
-%     else  
-%         MLIBS="-L$TMW_ROOT/bin/$Arch -lmx -lmex -lmat  -framework OpenGL"
-%     fi
-%     case "$Arch" in
-%         Undetermined)
-%         
+% 1. add to mlibs -framework OpenGL
 % 2. change mexopts.sh and add '-std=c++11' to CXXFLAGS
 % 3. make('all','-I/usr/local/include -losg -losgDB -losgGA -losgViewer -losgUtil -lOpenThreads');
 

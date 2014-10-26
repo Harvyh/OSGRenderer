@@ -8,6 +8,10 @@ Efficient Matlab Wrapper for Offscreen Rendering engine using [OpenSceneGraph 3]
 
 There are two modes for installation. One that does not require OSG installation which is recommended and the one that works without OSG installation.
 
+Requirement 
+------------
+
+MATLAB version 2013a or above
 
 Install : Standard (Linux/Mac)
 ------------------
@@ -34,17 +38,7 @@ Install : Standard (Linux/Mac)
         - if you are using G++ version < 4.7 add line `CFLAGS="$CFLAGS -std=c++0x"` 
         - if you are using G++ version >= 4.7 add line `CFLAGS="$CFLAGS -std=c++11"`
 
-4. **Mac only** add `-framework OpenGL` to `mexopts.sh`. In Mac, to use OpenGL, you must add `-framework OpenGL` but `-framework` option is not supported by `mex` 
-
-    ```
-    TMW_ROOT="$MATLAB"
-    MFLAGS=''
-    if [ "$ENTRYPOINT" = "mexLibrary" ]; then
-        MLIBS="-L$TMW_ROOT/bin/$Arch -lmx -lmex -lmat -lmwservices -lut -framework OpenGL"
-    else  
-        MLIBS="-L$TMW_ROOT/bin/$Arch -lmx -lmex -lmat  -framework OpenGL"
-    fi
-    ```
+4. **Mac only** add `-framework OpenGL` to `MLIBS`
 
 5. Clone the MatlabRenderer repo
 
@@ -67,8 +61,8 @@ Install : Prebuild (Linux Only)
     
     ```
     cd MatlabRenderer
-    export LIBRARY_PATH=LIBRARY_PATH:path/to/MatlabRenderer/OSG/lib
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:path/to/MatlabRenderer/OSG/lib
+    export LIBRARY_PATH=LIBRARY_PATH:path/to/MatlabRenderer/lib/osg/:path/to/MatlabRenderer/lib/boost/
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:path/to/MatlabRenderer/lib/osg:path/to/MatlabRenderer/lib/boost/
     ```
     
 3. Run matlab
@@ -101,34 +95,45 @@ Usage
 
 ```
 % Initialize the Matlab object.
+renderingSizeX = 700; renderingSizeY = 700; % pixels
+
+azimuth = 90; elevation = 45; yaw = 0;
+% if you use field of view, set distance to 0
+distance = 0; fieldOfView = 25; 
+
+
+% Setup Renderer
 renderer = Renderer();
-renderingSizeX = 700 % pixels
-renderingSizeY = 700 % pixels
-azimuth = 90;
-elevation = 45;
-yaw = 0;
-distance = 0;
-fieldOfView = 25;
-renderer.initialize('Honda-Accord.3ds',...
-    renderingSizeX,...
-    renderingSizeY,...
-    azimuth,...
-    elevation,...
-    yaw,...
-    distance, 
-    fieldOfView);
+if ~renderer.initialize({'mesh/Honda-Accord.3ds', 'mesh/road_bike.3ds',...
+	 'mesh/untitled.dae'},700,700,45,0,0,0,25)
+    error('Renderer initilization failed');
+end
+
+
 
 % If the output is only the rendering, it renders more efficiently
-[rendering]= renderer.render();
-
-% Once you initialize, you can just set the viewpoint and render without loading CAD model again.
+renderer.setModelIndex(1);
 renderer.setViewpoint(az,el,yaw,0,fov);
 [rendering]= renderer.render();
 
+
+
+% Once you initialized the renderer, you can just set 
+% the viewpoint and render without loading CAD model again.
+renderer.setModelIndex(2);
+renderer.setViewpoint(az,el,yaw,0,fov);
+[rendering]= renderer.render();
+
+
+
 % If you give the second output, it renders depth too.
+renderer.setModelIndex(1);
+renderer.setViewpoint(0,20,0,0,25);
+
 [rendering, depth]= renderer.render();
-subplot(121);imagesc(rendering);
-subplot(122);imagesc(depth);
+subplot(121);imagesc(rendering); axis equal; axis off;
+subplot(122);imagesc(1-depth); axis equal; axis off; colormap hot;
+
 
 % You must clear the memory before you exit
 renderer.delete();
@@ -136,7 +141,7 @@ renderer.delete();
 
 Example 
 
-![](https://dl.dropboxusercontent.com/u/57360783/MatlabRenderer/rendering.png)
+![](https://dl.dropboxusercontent.com/u/57360783/MatlabRenderer/rendering_with_depth.png)
 
 
 Input CAD format
@@ -145,12 +150,31 @@ Input CAD format
 List of available formats 
 http://trac.openscenegraph.org/projects/osg//wiki/Support/UserGuides/Plugins
 
+To get free models, use [Google 3D Warehouse](https://3dwarehouse.sketchup.com) and use Sketchup to edit models.
+Rotate the model and export it to the format that you will use.
+
+COLLADA (DAE) format support
+-------------
+Follow the direction of
+https://github.com/openscenegraph/osg/tree/master/src/osgPlugins/dae
+
+The precompiled library contains osgPlugin for collada format. (LINUX)
+
+
+ISSUE
+----------------
+
+Warning: could not find plugin to read objects from file *.*
+
+The reason that it fails to load is that the renderer fails to load appropriate shared library. In the prebuilt ./OSG/lib/osgPlugins-3.3.2, yoou can see several plugins. Add the plugin path to 'LD_L
+IBRARY_PATH`.
+
+You must either install complete OSG package or download from http://trac.openscenegraph.org/projects/osg//wiki/Downloads/Dependencies
 
 TODO
 ----
 
 1. Windows installation
-
 2. Add dylib for prebuilt OS X
 
 - http://stackoverflow.com/questions/3146274/is-it-ok-to-use-dyld-library-path-on-mac-os-x-and-whats-the-dynamic-library-s
