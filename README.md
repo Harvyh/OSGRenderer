@@ -8,11 +8,6 @@ Efficient Matlab Wrapper for Offscreen Rendering engine using [OpenSceneGraph 3]
 
 There are two modes for installation. One that does not require OSG installation which is recommended and the one that works without OSG installation.
 
-Requirement 
-------------
-
-MATLAB version 2013a or above
-
 Install : Standard (Linux/Mac)
 ------------------
 
