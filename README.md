@@ -158,18 +158,60 @@ COLLADA (DAE) format support
 Follow the direction of
 https://github.com/openscenegraph/osg/tree/master/src/osgPlugins/dae
 
+Specifically, 
+http://collada.org/mediawiki/index.php/DOM_guide:_Setting_up
+
+1. download COLLADA from
+
+	>    svn co https://collada-dom.svn.sourceforge.net/svnroot/collada-dom/trunk colladadom
+
+2. compile COLLADA
+
+	> cd colladadom
+	> ccmake .
+
+	and configure and generate `Makefile`. and
+
+	> make
+
+2. download openscenegraph 
+
+	> cd /to/your/osg/directory/
+	> git clone https://github.com/openscenegraph/osg
+
+3. go to the downloaded `osg` and `ccmake` the folder
+
+	> cd osg
+	> ccmake  .
+
+	and configure and make sure that COLLADA_DOM_ROOT, COLLADA_BOOST_FILESYSTEM_LIBRARY, COLLADA_DYNAMIC_LIBRARY,  COLLADA_INCLUDE_DIR have been set correctly.
+	
+	COLLADA_DOM_ROOT :
+	COLLADA_BOOST_FILESYSTEM_LIBRARY : Boost library. something like /usr/local/lib/libboost_filesystem.dylib
+	COLLADA_BOOST_SYSTEM_LIBRARY : Boost library. something like /usr/local/lib/libboost_system.dylib
+	COLLADA_DYNAMIC_LIBRARY : /path/to/colladadom/dom/libcollada-dom2.4-dp.dylib
+	COLLADA_INCLUDE_DIR : /path/to/colladadom/dom/include where dae.h resides
+	
+	> make
+
+
 The precompiled library contains osgPlugin for collada format. (LINUX)
 
 
 ISSUE
 ----------------
 
-Warning: could not find plugin to read objects from file *.*
+### Q: Warning: could not find plugin to read objects from file *.*
 
-The reason that it fails to load is that the renderer fails to load appropriate shared library. In the prebuilt ./OSG/lib/osgPlugins-3.3.2, yoou can see several plugins. Add the plugin path to 'LD_L
+A: The reason that it fails to load is that the renderer fails to load appropriate shared library. In the prebuilt ./OSG/lib/osgPlugins-3.3.2, yoou can see several plugins. Add the plugin path to 'LD_L
 IBRARY_PATH`.
 
 You must either install complete OSG package or download from http://trac.openscenegraph.org/projects/osg//wiki/Downloads/Dependencies
+
+### Q: Your MEX-file “path/MatlabRenderer/Renderer_mexa64” is locked and must be unlocked before recompiling
+
+The binary file is in use. Restart the matlab which will clear the memory.
+
 
 TODO
 ----

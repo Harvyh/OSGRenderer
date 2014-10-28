@@ -1,21 +1,37 @@
 startup;
+% Initialize the Matlab object.
+renderingSizeX = 700; renderingSizeY = 700; % pixels
 
-% demo renderer
-if exist('renderer','var')
-  renderer.delete();
-  clear renderer;
-end
+azimuth = 90; elevation = 45; yaw = 0;
+% if you use field of view, set distance to 0
+distance = 0; fieldOfView = 25; 
 
-DEBUG = false;
-compile;
 
-%%%%%%%%%%% Start making Rendering engine %%%%%%%%%%
+% Setup Renderer
 renderer = Renderer();
-if ~renderer.initialize({'mesh/Honda-Accord.3ds',...
-        'mesh/road_bike.3ds', 'mesh/untitled.dae'},700,700,45,0,0,0,25)
+if ~renderer.initialize({'mesh/Honda-Accord.3ds', 'mesh/road_bike.3ds',...
+         'mesh/untitled.dae'},700,700,45,0,0,0,25)
     error('Renderer initilization failed');
 end
 
+
+
+% If the output is only the rendering, it renders more efficiently
+renderer.setModelIndex(1);
+renderer.setViewpoint(az,el,yaw,0,fov);
+[rendering]= renderer.render();
+
+
+
+% Once you initialized the renderer, you can just set 
+% the viewpoint and render without loading CAD model again.
+renderer.setModelIndex(2);
+renderer.setViewpoint(az,el,yaw,0,fov);
+[rendering]= renderer.render();
+
+
+
+% If you give the second output, it renders depth too.
 renderer.setModelIndex(1);
 renderer.setViewpoint(0,20,0,0,25);
 
@@ -23,16 +39,7 @@ renderer.setViewpoint(0,20,0,0,25);
 subplot(121);imagesc(rendering); axis equal; axis off;
 subplot(122);imagesc(1-depth); axis equal; axis off; colormap hot;
 
-% For matlab version > 2012, measure how long it takes
-timeit(@() renderer.render())
 
-% renderer.setViewport(400,400);
+% You must clear the memory before you exit
+renderer.delete();
 
-renderer.setModelIndex(3);
-for az = 0:90:180
-  for fov = 15:10:65
-    renderer.setViewpoint(az,30,0,0,fov);
-    [rendering]= renderer.render();
-    figure(2); imagesc(rendering); pause(0.002);
-  end
-end

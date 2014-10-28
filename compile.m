@@ -16,7 +16,7 @@ else
 end
 
 % Set library path
-setenv('LIBRARY_PATH','/usr/local/lib64/');
+% setenv('LIBRARY_PATH','/usr/local/lib64/');
 
 if isunix && ~ismac
   system('rm bin/Renderer_.mexa64');

@@ -94,11 +94,13 @@ bool Renderer::initialize(std::vector<std::string> fileNames,
             loadedModels.clear();
     		    return false;
     	  }
-        
-        optimizer.optimize(loadedModels[fileIndex].get());
-        loadedModels[fileIndex]->accept(tv);
+       
+        // Optimizer
+        // optimizer.optimize(loadedModels[fileIndex].get());
+        // Texture
+        // loadedModels[fileIndex]->accept(tv);
         // Smooth faces
-        loadedModels[fileIndex]->accept(sv);
+        // loadedModels[fileIndex]->accept(sv);
         std::cout<<"Model Loaded:"<<fileNames[fileIndex]<<std::endl;
     }
    
@@ -149,8 +151,8 @@ bool Renderer::initialize(std::vector<std::string> fileNames,
   
   	sceneRoot = new osg::Group;
   	for(int modelIndex = 0; modelIndex < loadedModels.size(); modelIndex++){
-          sceneRoot->addChild(loadedModels[modelIndex]);
-      }
+        sceneRoot->addChild(loadedModels[modelIndex]);
+    }
   
   	//	osg::ref_ptr<osg::Light> light = new osg::Light;
   	//	osg::ref_ptr<osg::LightSource> lightSource = new osg::LightSource;
@@ -170,9 +172,9 @@ bool Renderer::initialize(std::vector<std::string> fileNames,
   	    boundingSpheres.push_back( loadedModels[modelIndex]->getBound() );
       	objectCenters.push_back( boundingSpheres[modelIndex].center() );
       	objectRadiuses.push_back( boundingSpheres[modelIndex].radius() );
-      }
+    }
   
-      setModelIndex(0);
+    setModelIndex(0);
   	setViewpoint(_azimuth, _elevation, _yaw, _distance, _fieldOfView);
   	viewer->setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
   	viewer->setUpThreading();
