@@ -81,7 +81,7 @@ bool Renderer::initialize(std::vector<std::string> fileNames,
 
   	offScreen = _offScreen;
     
-    osgUtil::Optimizer optimizer;
+    // osgUtil::Optimizer optimizer;
     osgUtil::Optimizer::TextureVisitor tv(true, false, false, false, false, false);
     osgUtil::SmoothingVisitor sv;
    
@@ -98,9 +98,9 @@ bool Renderer::initialize(std::vector<std::string> fileNames,
         // Optimizer
         // optimizer.optimize(loadedModels[fileIndex].get());
         // Texture
-        // loadedModels[fileIndex]->accept(tv);
+        loadedModels[fileIndex]->accept(tv);
         // Smooth faces
-        // loadedModels[fileIndex]->accept(sv);
+        loadedModels[fileIndex]->accept(sv);
         std::cout<<"Model Loaded:"<<fileNames[fileIndex]<<std::endl;
     }
    
@@ -201,10 +201,10 @@ bool Renderer::addModel(std::string fileName){
     		return false;
    	}
         
-    optimizer.optimize(loadedModels.back().get());
-    loadedModels.back()->accept(tv);
+    // optimizer.optimize(loadedModels.back().get());
+    // loadedModels.back()->accept(tv);
     // Smooth faces
-    loadedModels.back()->accept(sv);
+    // loadedModels.back()->accept(sv);
     
     sceneRoot->addChild(loadedModels.back());
     modelNames.push_back(fileName);

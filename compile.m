@@ -20,7 +20,9 @@ end
 
 if isunix && ~ismac
   system('rm bin/Renderer_.mexa64');
-  make(DEBUG_FLAG,'-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I./include/osg/ -L./lib/osg/ -L./lib/mesa/');
+  % SW Rendering
+  % make(DEBUG_FLAG,'-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I./include/osg/ -L./lib/osg/ -L./lib/mesa/');
+  make(DEBUG_FLAG,'-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I./include/osg/');
 end
 
 % For mac llvm
