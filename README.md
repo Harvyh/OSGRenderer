@@ -13,7 +13,7 @@ There are two modes for installation. One that does not require OSG installation
 Install : Standard (Linux/Mac)
 ------------------
 
-`Note` Prebuilt OSG library only works in Linux. If you want to use 
+`Note` Prebuilt OSG library only works for Linux. 
 
 1. Install Open Scene Graph from https://github.com/openscenegraph/osg
 
@@ -24,26 +24,13 @@ Install : Standard (Linux/Mac)
     sudo make install
     ```
 
-2. Locate `mexopts.sh` file which is used for compiling mex file. 
-    - Type `mex -v -n` in the MATLAB command line
-    - Read the output and locate `mexopts.sh` file. There are two paths: 1. your Matlab default file 2. your current configuration file. You must edit the current configuration file.
-
-3. Add `-std=c++11` to CXXFLAGS in `mexopts.sh`
-    - For Mac
-        - add line `CFLAGS="$CFLAGS -std=c++11"
-    - For Linux
-        - if you are using G++ version < 4.7 add line `CFLAGS="$CFLAGS -std=c++0x"` 
-        - if you are using G++ version >= 4.7 add line `CFLAGS="$CFLAGS -std=c++11"`
-
-4. **Mac only** add `-framework OpenGL` to `MLIBS`
-
-5. Clone the MatlabRenderer repo
+2. Clone the MatlabRenderer repo
 
     ```
     git clone https://github.com/chrischoy/MatlabRenderer.git
     ```
 
-6. Go to the `MatlabRenderer` folder and run `compile.m`
+3. Go to the `MatlabRenderer` folder and run `compile.m`
 
 Install : Prebuild (Linux Only)
 -------------------------------
