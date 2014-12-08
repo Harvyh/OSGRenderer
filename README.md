@@ -4,7 +4,9 @@ Matlab Offscreen Renderer
 [TOC]
 
 
-Efficient Matlab Wrapper for Offscreen Rendering engine using [OpenSceneGraph 3](https://github.com/openscenegraph/osg) and [Mexplus](https://github.com/kyamagu/mexplus). The Matlab wrapper holds the C++ object instance and returns rendering whenever the Matlab wrapper object requests it. It is more since you do not load a CAD model every time you render it. 
+Efficient Matlab Wrapper for Offscreen Rendering engine using [OpenSceneGraph 3](https://github.com/openscenegraph/osg) and [Mexplus](https://github.com/kyamagu/mexplus). The Matlab wrapper holds the C++ object instance and returns rendering whenever the Matlab wrapper object requests it. It is more efficient since you do not load a CAD model every time you render it. 
+
+The Renderer object remains on memory and it contains all the loaded CAD models and returns data to MATLAB directly.
 
 There are two modes for installation. One that does not require OSG installation which is recommended and the one that works without OSG installation.
 
