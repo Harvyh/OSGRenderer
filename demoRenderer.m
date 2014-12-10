@@ -45,6 +45,11 @@ renderer.setViewpoint(45,20,0,0,25);
 subplot(223);imagesc(rendering); axis equal; axis off;
 subplot(224);imagesc(1-depth); axis equal; axis off; colormap hot;
 
+% Return viewmatrix
+renderer.getViewMatrix()
+
+% Return projection matrix
+renderer.getProjectionMatrix()
 
 % You must clear the memory before you exit
 renderer.delete(); clear renderer;

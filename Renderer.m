@@ -70,6 +70,19 @@ methods
     end
   end
 
+  function viewmatrix = getViewMatrix(this)
+  %setViewpoint set azimuth elevation yaw distance and field of view (view angle)
+    assert(isscalar(this));
+    viewmatrix = Renderer_('getViewMatrix', this.id_);
+  end
+
+  function projection_matrix = getProjectionMatrix(this)
+  %setViewpoint set azimuth elevation yaw distance and field of view (view angle)
+    assert(isscalar(this));
+    projection_matrix = Renderer_('getProjectionMatrix', this.id_);
+  end
+  
+  
   function [cropRendering, cropDepth] = renderCrop(this)
   % render image and crop tightly
     assert(isscalar(this));

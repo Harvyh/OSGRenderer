@@ -67,12 +67,15 @@ public:
 	static void flipRendering(GLubyte *imageInput, int gWidth , int gHeight, GLubyte *imageOutput);
 	static void flipDepth(float * depthInput, int gWidth, int gHeight, double * depthOutput);
 
-//	void setViewport(int _screenWidth, int _screenHeight);
+//	  void setViewport(int _screenWidth, int _screenHeight);
 	void setViewpoint(double _azimuth,
 			double _elevation,
 			double _yaw,
 			double _distance,
 			double _fieldOfView);
+
+    const osg::Matrixd& getViewMatrix();
+    const osg::Matrixd& getProjectionMatrix();
 
 //    void setViewpoint(double _azimuth,
 //			double _elevation,
@@ -265,6 +268,41 @@ MEX_DEFINE(setViewpoint) (int nlhs, mxArray* plhs[],
 	renderer->setViewpoint(input.get<double>(1), input.get<double>(2), input.get<double>(3), input.get<double>(4), input.get<double>(5));
 }
 
+MEX_DEFINE(getViewMatrix) (int nlhs, mxArray* plhs[],
+                   int nrhs, const mxArray* prhs[]) {
+	InputArguments input(nrhs, prhs, 1);
+	OutputArguments output(nlhs, plhs, 1);
+
+	CLR::Renderer* renderer = Session<CLR::Renderer>::get(input.get(0));
+	const osg::Matrixd& view_mat = renderer->getViewMatrix();
+
+	plhs[0] = mxCreateDoubleMatrix(4, 4, mxREAL);
+	double* mat_raw = mxGetPr(plhs[0]);
+
+    for(int row_idx = 0; row_idx < 4; row_idx ++)
+      for(int col_idx = 0; col_idx < 4; col_idx ++){
+        mat_raw[row_idx + col_idx * 4] = view_mat(row_idx,col_idx);
+      }
+	output.set(0,plhs[0]);
+}
+
+MEX_DEFINE(getProjectionMatrix) (int nlhs, mxArray* plhs[],
+                   int nrhs, const mxArray* prhs[]) {
+	InputArguments input(nrhs, prhs, 1);
+	OutputArguments output(nlhs, plhs, 1);
+
+	CLR::Renderer* renderer = Session<CLR::Renderer>::get(input.get(0));
+	const osg::Matrixd& view_mat = renderer->getProjectionMatrix();
+
+	plhs[0] = mxCreateDoubleMatrix(4, 4, mxREAL);
+	double* mat_raw = mxGetPr(plhs[0]);
+
+    for(int row_idx = 0; row_idx < 4; row_idx ++)
+      for(int col_idx = 0; col_idx < 4; col_idx ++){
+        mat_raw[row_idx + col_idx * 4] = view_mat(row_idx,col_idx);
+      }
+	output.set(0,plhs[0]);
+}
 //MEX_DEFINE(setViewport) (int nlhs, mxArray* plhs[],
 //                   int nrhs, const mxArray* prhs[]) {
 //	InputArguments input(nrhs, prhs, 3);

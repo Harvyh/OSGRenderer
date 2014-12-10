@@ -67,11 +67,19 @@ void Renderer::setViewpoint(double _azimuth, double _elevation, double _yaw, dou
 	viewer->getCamera()->setProjectionMatrixAsPerspective( (fieldOfView <= 0)?25:fieldOfView, 1, 1 ,100000);
 }
 
-void Renderer::setViewmatrix(double _viewMatrix){
-	osg::Matrix m = osg::Matrix::lookAt(eye, objectCenters[current_model_index], up);
+//void Renderer::setViewmatrix(double _viewMatrix){
+//	osg::Matrix m = osg::Matrix::lookAt(eye, objectCenters[current_model_index], up);
+//
+//	viewer->getCamera()->setViewMatrix( m );
+//	viewer->getCamera()->setProjectionMatrixAsPerspective( (fieldOfView <= 0)?25:fieldOfView, 1, 1 ,100000);
+//}
 
-	viewer->getCamera()->setViewMatrix( m );
-	viewer->getCamera()->setProjectionMatrixAsPerspective( (fieldOfView <= 0)?25:fieldOfView, 1, 1 ,100000);
+const osg::Matrixd& Renderer::getViewMatrix(){
+	return viewer->getCamera()->getViewMatrix();
+}
+
+const osg::Matrixd& Renderer::getProjectionMatrix(){
+	return viewer->getCamera()->getProjectionMatrix();
 }
 
 bool Renderer::initialize(std::vector<std::string> fileNames,
