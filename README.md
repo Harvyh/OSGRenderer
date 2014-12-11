@@ -1,14 +1,25 @@
-Matlab Offscreen Renderer
+OpenSceneGraph Offscreen Renderer
 =========================
 
 [TOC]
 
 
-Efficient Matlab Wrapper for Offscreen Rendering engine using [OpenSceneGraph 3](https://github.com/openscenegraph/osg) and [Mexplus](https://github.com/kyamagu/mexplus). The Matlab wrapper holds the C++ object instance and returns rendering whenever the Matlab wrapper object requests it. It is more efficient since you do not load a CAD model every time you render it. 
+Efficient Object Rendering Engine for Offscreen rendering using [OpenSceneGraph 3](https://github.com/openscenegraph/osg).
 
-The Renderer object remains on memory and it contains all the loaded CAD models and returns data to MATLAB directly.
+It contains `python` and `matlab` bindings. The rendering is easy to use and cache CAD models so that it does not load CAD model every time it renders
 
-There are two modes for installation. One that does not require OSG installation which is recommended and the one that works without OSG installation.
+The C++ object is cached using [Mexplus](https://github.com/kyamagu/mexplus) and the matlab wrapper holds the C++ object instance 
+
+until a user destroy. The Renderer object remains on memory and it contains all the loaded CAD models and returns data to MATLAB or python directly. 
+
+Thus it is optimal for on-the-fly rendering or visualization. 
+
+There are two modes for installation. One that does not require OSG installation which is recommended and the one that works without OSG installation using prebuilt OSG libraries provided in this repo.
+
+But I strongly recommend installing OSG from source file (see the first instruction)
+
+Install : MATLAB Binding
+=======================
 
 Install : Standard (Linux/Mac)
 ------------------
@@ -24,33 +35,32 @@ Install : Standard (Linux/Mac)
     sudo make install
     ```
 
-2. Clone the MatlabRenderer repo
+2. Clone the OSGRenderer repo
 
     ```
-    git clone https://github.com/chrischoy/MatlabRenderer.git
+    git clone https://github.com/chrischoy/OSGRenderer.git
     ```
 
-3. Go to the `MatlabRenderer` folder and run `compile.m`
+3. Go to the `OSGRenderer` folder and run `compile.m`
 
 Install : Prebuild (Linux Only)
 -------------------------------
 
-1. Clone the MatlabRenderer repo
+1. Clone the OSGRenderer repo
 
     ```
-    git clone https://github.com/chrischoy/MatlabRenderer.git
+    git clone https://github.com/chrischoy/OSGRenderer.git
     ```
     
 2. Add compile library path and runtime library path. Note that `LD_LIBRARY_PATH` is for application library search path and `LIBRARY_PATH` is for compiler library search path. If you open new command line session, you must these lines every time unless you add the ld library path to `.bashrc`
     
     ```
-    cd MatlabRenderer
-    export LIBRARY_PATH=LIBRARY_PATH:path/to/MatlabRenderer/lib/osg/:path/to/MatlabRenderer/lib/boost/
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:path/to/MatlabRenderer/lib/osg:path/to/MatlabRenderer/lib/boost/
+    cd OSGRenderer
+    export LIBRARY_PATH=LIBRARY_PATH:path/to/OSGRenderer/lib/osg/:path/to/OSGRenderer/lib/boost/
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:path/to/OSGRenderer/lib/osg:path/to/OSGRenderer/lib/boost/
     ```
     
-3. Run matlab
-
+3. Go to the `OSGRenderer` folder and run `compile.m`
 
 Other IDE (Eclipse)
 -------------------
@@ -65,13 +75,28 @@ Other IDE (Eclipse)
     ```
 
 - If you installed OSG on `/usr/local/lib64` (which is default)
-go to `Run Configuration`, add Environment variable `LD_LIBRARY_PATH` and value `/usr/local/lib64`
+    go to `Run Configuration`, add Environment variable `LD_LIBRARY_PATH` and value `/usr/local/lib64`
 
 - Compile
     
     ```
-    g++ -o MatlabRenderer MatlabRenderer.cpp -lGL -losg -losgViewer -losgDB -losgGA -losgUtil -lboost_program_options -O3
+    g++ -o OSGRenderer OSGRenderer.cpp -lGL -losg -losgViewer -losgDB -losgGA -losgUtil -lboost_program_options -O3
     ```
+
+Install : Python Binding
+=======================
+
+1. Install Boost http://www.boost.org
+
+2. run compile.sh
+
+ISSUE
+-----
+
+1. Update gcc version to < 4.8.
+
+2. If you use MATLAB < 2012b, make sure to use matlab libstdc++ library when compiling OSG.
+
 
 
 Usage
@@ -204,7 +229,7 @@ IBRARY_PATH`.
 
 You must either install complete OSG package or download from http://trac.openscenegraph.org/projects/osg//wiki/Downloads/Dependencies
 
-### Q: Your MEX-file “path/MatlabRenderer/Renderer_mexa64” is locked and must be unlocked before recompiling
+### Q: Your MEX-file “path/OSGRenderer/Renderer_mexa64” is locked and must be unlocked before recompiling
 
 The binary file is in use. Restart the matlab which will clear the memory.
 
