@@ -43,7 +43,7 @@ renderer.setViewpoint(45,20,0,0,25);
 
 [rendering, depth]= renderer.render();
 subplot(223);imagesc(rendering); axis equal; axis off;
-subplot(224);imagesc(1-depth); axis equal; axis off; colormap hot;
+subplot(224);imagesc(depth); axis equal; axis off; colormap hot;
 
 % Return viewmatrix
 renderer.getViewMatrix()

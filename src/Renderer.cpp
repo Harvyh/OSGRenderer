@@ -5,7 +5,7 @@
  *      Author: Christopher B. Choy
  */
 
-#include "Renderer.h"
+#include "Renderer.hpp"
 
 namespace CLR {
 
@@ -269,7 +269,7 @@ void Renderer::flipRendering(unsigned char *imageInput, int gWidth , int gHeight
 void Renderer::flipDepth(float * depthInput, int gWidth, int gHeight, double * depthOutput){
 	for (int i = 0;i < gHeight;i++) {
 		for (int j = 0;j < gWidth;j++) {
-			depthOutput[i*gWidth+j] = 1 - depthInput[(gWidth-1-j)*gHeight+i];
+			depthOutput[i*gWidth+j] = depthInput[(gWidth-1-j)*gHeight+i];
 		}
 	}
 }
