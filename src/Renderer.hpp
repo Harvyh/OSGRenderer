@@ -27,6 +27,8 @@
 
 #define PI 3.14159265359
 
+typedef std::vector<std::string> strvec;
+
 namespace CLR {
 
 // Interal class
@@ -37,7 +39,7 @@ class Renderer {
 protected:
 	// Scene data
 	osg::ref_ptr<osg::Group> sceneRoot;
-    std::vector<std::string> modelNames;
+    strvec modelNames;
     std::vector<osg::ref_ptr<osg::Node> > loadedModels;
 	osg::ref_ptr<osgViewer::Viewer> viewer;
 
@@ -64,6 +66,7 @@ public:
     std::vector<osg::Vec3> objectCenters;
 
 	Renderer();
+	static void flipRenderingPy(GLubyte *imageInput, int gWidth , int gHeight, GLubyte *imageOutput);
 	static void flipRendering(GLubyte *imageInput, int gWidth , int gHeight, GLubyte *imageOutput);
 	static void flipDepth(float * depthInput, int gWidth, int gHeight, double * depthOutput);
 
@@ -83,12 +86,12 @@ public:
 //			double _distance,
 //			double _fieldOfView,
 //            int _model_index);
-    std::vector<std::string> getModelNames();
+    strvec getModelNames();
 
 // 0 base index
     void setModelIndex(int _modelIndex);
     bool addModel(std::string fileName);
-	bool initialize(std::vector<std::string> fileNames,
+	bool initialize(strvec fileNames,
 			bool offScreen,
 			int _screenWidth,
 			int _screenHeight,
@@ -123,7 +126,9 @@ public:
 		osg::ref_ptr<osg::Image> renderedImage = new osg::Image;
 		renderedImage->readPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE);
 		// osgDB::writeImageFile(*renderedImage, "rendered.png");
-		Renderer::flipRendering(renderedImage->data(),width,height,rendering);
+		
+        Renderer::flipRendering(renderedImage->data(),width,height,rendering);
+		// Renderer::flipRenderingPy(renderedImage->data(),width,height,rendering);
 
 		if (depth != NULL){
 			osg::ref_ptr<osg::Image> depthImage(new osg::Image);

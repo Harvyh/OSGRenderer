@@ -82,7 +82,7 @@ const osg::Matrixd& Renderer::getProjectionMatrix(){
 	return viewer->getCamera()->getProjectionMatrix();
 }
 
-bool Renderer::initialize(std::vector<std::string> fileNames,
+bool Renderer::initialize(strvec fileNames,
   		bool _offScreen,
   		int _screenWidth,
   		int _screenHeight,
@@ -103,12 +103,13 @@ bool Renderer::initialize(std::vector<std::string> fileNames,
     for (int fileIndex = 0; fileIndex < fileNames.size(); fileIndex++){
         // Return NULL on failure
         loadedModels.push_back(osgDB::readNodeFile(fileNames[fileIndex]));
-    	  // Fail to load object
-    	  if (!loadedModels[fileIndex]){
-    		    std::cout<<"Cannot load the model : " << fileNames[fileIndex] << std::endl;
+    	
+        // Fail to load object
+    	if (!loadedModels[fileIndex]){
+    	    std::cout<<"Cannot load the model : " << fileNames[fileIndex] << std::endl;
             loadedModels.clear();
-    		    return false;
-    	  }
+    	    return false;
+    	}
        
         // Optimizer
         // optimizer.optimize(loadedModels[fileIndex].get());
@@ -244,6 +245,26 @@ void Renderer::render(unsigned char * _rendering, double * _depth){
 	}
 }
 
+void Renderer::flipRenderingPy(unsigned char *imageInput, int gWidth , int gHeight, unsigned char*imageOutput)
+{
+	if (NULL == imageOutput) {
+		return;
+	} else {
+		// Rendered image is flipped.
+		// Assume that the imageOutput is initialized.
+		for (int i = 0;i < gHeight;i++) {
+			unsigned char *rowPtr2 = imageInput + (gHeight - 1 - i) * gWidth * 3;
+			for (int w = 0;w < gWidth;w++) {
+				// red
+				imageOutput[                   w + i*gWidth] = rowPtr2[w*3];
+				// green
+				imageOutput[gHeight*gWidth   + w + i*gWidth] = rowPtr2[w*3+1];
+				// blue
+				imageOutput[gHeight*gWidth*2 + w + i*gWidth] = rowPtr2[w*3+2];
+			}
+		}
+	}
+}
 
 void Renderer::flipRendering(unsigned char *imageInput, int gWidth , int gHeight, unsigned char*imageOutput)
 {
@@ -274,8 +295,7 @@ void Renderer::flipDepth(float * depthInput, int gWidth, int gHeight, double * d
 	}
 }
 
-
-std::vector<std::string> Renderer::getModelNames(){
+strvec Renderer::getModelNames(){
     return modelNames;
 }
 
