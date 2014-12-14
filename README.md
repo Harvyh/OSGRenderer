@@ -99,10 +99,10 @@ ISSUE
 
 
 
-Usage
+Usage: Matlab
 -----
 
-```
+```matlab
 % Add binary path
 addpath('./bin');
 
@@ -160,10 +160,40 @@ renderer.getProjectionMatrix()
 renderer.delete(); clear renderer;
 ```
 
-Example 
+Output 
 
 ![](https://dl.dropboxusercontent.com/u/57360783/MatlabRenderer/rendering_with_depth.png)
 
+
+Usage : Python Rendering
+-----------------------
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+from PyRenderer import Renderer
+x = Renderer()
+x.initialize(['mesh/Honda-Accord.3ds'], 1000, 1000, 25, 0, 0, 0, 0, 25)
+
+
+
+# Render 
+x.setViewpoint(45,20,0,0,25)
+rendering, depth = x.render()
+
+# Flip dimension
+rendering = rendering.transpose((2,1,0))
+depth = depth.transpose((1,0))
+
+# image show
+plt.imshow(rendering)
+plt.show()
+
+# depth show
+plt.imshow(1-depth)
+plt.show()
+```
 
 Input CAD format
 ----------------
