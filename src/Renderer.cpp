@@ -245,26 +245,26 @@ void Renderer::render(unsigned char * _rendering, double * _depth){
 	}
 }
 
-void Renderer::flipRenderingPy(unsigned char *imageInput, int gWidth , int gHeight, unsigned char*imageOutput)
-{
-	if (NULL == imageOutput) {
-		return;
-	} else {
-		// Rendered image is flipped.
-		// Assume that the imageOutput is initialized.
-		for (int i = 0;i < gHeight;i++) {
-			unsigned char *rowPtr2 = imageInput + (gHeight - 1 - i) * gWidth * 3;
-			for (int w = 0;w < gWidth;w++) {
-				// red
-				imageOutput[                   w + i*gWidth] = rowPtr2[w*3];
-				// green
-				imageOutput[gHeight*gWidth   + w + i*gWidth] = rowPtr2[w*3+1];
-				// blue
-				imageOutput[gHeight*gWidth*2 + w + i*gWidth] = rowPtr2[w*3+2];
-			}
-		}
-	}
-}
+// void Renderer::flipRenderingPy(unsigned char *imageInput, int gWidth , int gHeight, unsigned char*imageOutput)
+// {
+// 	if (NULL == imageOutput) {
+// 		return;
+// 	} else {
+// 		// Rendered image is flipped.
+// 		// Assume that the imageOutput is initialized.
+// 		for (int i = 0;i < gHeight;i++) {
+// 			unsigned char *rowPtr2 = imageInput + (gHeight - 1 - i) * gWidth * 3;
+// 			for (int w = 0;w < gWidth;w++) {
+// 				// red
+// 				imageOutput[                   w + i*gWidth] = rowPtr2[w*3];
+// 				// green
+// 				imageOutput[gHeight*gWidth   + w + i*gWidth] = rowPtr2[w*3+1];
+// 				// blue
+// 				imageOutput[gHeight*gWidth*2 + w + i*gWidth] = rowPtr2[w*3+2];
+// 			}
+// 		}
+// 	}
+// }
 
 void Renderer::flipRendering(unsigned char *imageInput, int gWidth , int gHeight, unsigned char*imageOutput)
 {

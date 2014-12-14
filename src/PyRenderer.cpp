@@ -90,7 +90,7 @@ py::object render_wrapper(py::tuple args, py::dict kwargs)
     py::handle<> hRendering( pyRendering );
     py::numeric::array aRendering( hRendering );
    
-    PyObject * pyDepth = PyArray_SimpleNewFromData( 2, &depth_size_npy[0], NPY_FLOAT32, ptr_depth );
+    PyObject * pyDepth = PyArray_SimpleNewFromData( 2, &depth_size_npy[0], NPY_DOUBLE, ptr_depth );
     py::handle<> hDepth( pyDepth );
     py::numeric::array aDepth( hDepth );
  
