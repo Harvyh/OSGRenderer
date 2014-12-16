@@ -88,7 +88,21 @@ Install : Python Binding
 
 1. Install Boost http://www.boost.org
 
-2. run compile.sh
+2. Modify Makefile variables
+
+    ```
+    # Run numpy.get_include() in python to get the following path
+    NUMPY_INCLUDE = /path/to/anaconda/lib/python2.7/site-packages/numpy/core/include
+    # PYCONFIG_PATH = /usr/local/python2.7/
+    PYCONFIG_PATH = /path/to/anaconda/include/python2.7
+    ```
+
+
+3. make it
+
+    ```
+    make
+    ```
 
 ISSUE
 -----
