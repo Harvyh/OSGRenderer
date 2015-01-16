@@ -18,10 +18,25 @@ end
 % Set library path
 % setenv('LIBRARY_PATH','/usr/local/lib64/');
 
+if exist('bin','dir')
+    if exist('bin/Renderer_.mexa64') %  if the binary file exists
+        system('rm bin/Renderer_.mexa64');
+    elseif exist('bin/Renderer_.mexmaci64')
+        system('rm bin/Renderer_.mexmaci64');
+    end
+else
+    mkdir('bin')
+end
+
+
 if isunix && ~ismac
-  system('rm bin/Renderer_.mexa64');
   % SW Rendering
+  % if SW rendering
   % make(DEBUG_FLAG,'-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I./include/osg/ -L./lib/osg/ -L./lib/mesa/');
+  % 
+  % if gcc version < 4.7
+  make(DEBUG_FLAG,'-v  CXXFLAGS=''-fPIC $CXXFLAGS -std=gnu++0x''','-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I/usr/local/include/osg/ -L/usr/local/lib64/');
+  % else
   make(DEBUG_FLAG,'-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I./include/osg/');
 end
 
@@ -37,10 +52,8 @@ end
 
 if ismac
   if verLessThan('matlab', '8.0.1')
-    system('rm bin/Renderer_.mexmaci64');
     make(DEBUG_FLAG,'-I/usr/local/include -L/usr/local/lib -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads');
   else
-    system('rm bin/Renderer_.mexmaci64');
     make(DEBUG_FLAG,'-v CXXFLAGS=''$CXXFLAGS -stdlib=libc++ -std=gnu++11''','-I/usr/local/include -L/usr/local/lib -lc++ -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads');
   end
 end

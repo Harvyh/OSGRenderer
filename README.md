@@ -262,6 +262,12 @@ http://collada.org/mediawiki/index.php/DOM_guide:_Setting_up
 
 The precompiled library contains osgPlugin for collada format. (LINUX)
 
+COLLADA MAC INSTALL (DOM 2.2 Install Fail on 10.10)
+-------------------
+
+Install DOM2.2
+export COLLADA_DIR=/path/to/collada/; cmake .
+make
 
 ISSUE
 ----------------

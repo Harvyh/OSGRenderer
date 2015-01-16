@@ -51,7 +51,7 @@ public:
 	// Camera related variables
 	int screenWidth;
 	int screenHeight;
-	
+
     unsigned int current_model_index;
 
     double azimuth;
@@ -66,9 +66,23 @@ public:
     std::vector<osg::Vec3> objectCenters;
 
 	Renderer();
+	bool initialize(strvec fileNames,
+			bool offScreen,
+			int _screenWidth,
+			int _screenHeight,
+			double _azimuth,
+			double _elevation,
+			double _yaw,
+			double _distance,
+			double _fieldOfView);
+
 	static void flipRenderingPy(GLubyte *imageInput, int gWidth , int gHeight, GLubyte *imageOutput);
 	static void flipRendering(GLubyte *imageInput, int gWidth , int gHeight, GLubyte *imageOutput);
 	static void flipDepth(float * depthInput, int gWidth, int gHeight, double * depthOutput);
+
+    osg::LightSource* createLightSource(unsigned int num,
+        const osg::Vec3& trans,
+        const osg::Vec4& color);
 
 //	void setViewport(int _screenWidth, int _screenHeight);
 	void setViewpoint(double _azimuth,
@@ -86,21 +100,12 @@ public:
 //			double _distance,
 //			double _fieldOfView,
 //            int _model_index);
-    strvec getModelNames();
+    strvec getModelNames(){ return modelNames; }
 
 // 0 base index
     void setModelIndex(int _modelIndex);
     bool addModel(std::string fileName);
-	bool initialize(strvec fileNames,
-			bool offScreen,
-			int _screenWidth,
-			int _screenHeight,
-			double _azimuth,
-			double _elevation,
-			double _yaw,
-			double _distance,
-			double _fieldOfView);
-
+    bool removeModel(int _modelIndex);
 	void render(unsigned char* rendering, double * depth);
 
 	virtual ~Renderer();
@@ -126,7 +131,7 @@ public:
 		osg::ref_ptr<osg::Image> renderedImage = new osg::Image;
 		renderedImage->readPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE);
 		// osgDB::writeImageFile(*renderedImage, "rendered.png");
-		
+
         Renderer::flipRendering(renderedImage->data(),width,height,rendering);
 		// Renderer::flipRenderingPy(renderedImage->data(),width,height,rendering);
 
@@ -142,13 +147,13 @@ private:
 	virtual ~CaptureCB() {
 	}
 };
-    
+
 //    class ShadeModelVisitor : public osg::NodeVisitor
 //    {
 //    public:
 //        ShadeModelVisitor ()
 //        : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN ){};
-//        
+//
 //        // This method gets called for every node in the scene
 //        //   graph. Check each node to see if its name matches
 //        //   out target. If so, save the node's address.
@@ -159,13 +164,13 @@ private:
 //                sm->setMode( osg::ShadeModel::SMOOTH );
 //                std::cout<<"model smooth"<<std::endl;
 //            }
-//            
+//
 //            // Keep traversing the rest of the scene graph.
 //            traverse( node );
 //        }
-//        
+//
 //        osg::Node* getNode() { return _node.get(); }
-//        
+//
 //    protected:
 //        osg::ref_ptr<osg::Node> _node;
 //    };

@@ -18,6 +18,37 @@ Renderer::~Renderer() {
 	// TODO Auto-generated destructor stub
 }
 
+/* ------------------------------------------------------------------------
+ * Modified by Wonhui Kim kwh6465@gmail.com
+ * createLightSource - creates light sources from the scene graph
+ *-----------------------------------------------------------------------*/
+osg::LightSource* Renderer::createLightSource(
+        unsigned int num,
+        const osg::Vec3& trans,
+        const osg::Vec4& color)
+{
+    // create a new light
+    osg::ref_ptr<osg::Light> light = new osg::Light;
+    light->setLightNum(num);
+    light->setDiffuse(color);
+    light->setPosition( osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f) );
+
+    // assign the light to a newly-created osg::LightSource node
+    osg::ref_ptr<osg::LightSource> lightSource = new osg::LightSource;
+    lightSource->setLight( light );
+
+    // add the light source to a translated osg::MatrixTransform node
+    osg::ref_ptr<osg::MatrixTransform> sourceTrans = new osg::MatrixTransform;
+    sourceTrans->setMatrix( osg::Matrix::translate(trans) );
+    sourceTrans->addChild( lightSource.get() );
+    sourceTrans.release();
+
+    return lightSource;
+}
+/* ----------------------------------------------------------------------
+ * Edit End
+ *----------------------------------------------------------------------*/
+
 // OSG fails
 //void Renderer::setViewport(int _screenWidth, int _screenHeight){
 //	screenWidth = _screenWidth;
@@ -33,7 +64,7 @@ void Renderer::setModelIndex(int _model_index){
 
     current_model_index = _model_index;
     for(int model_index = 0; model_index < loadedModels.size(); model_index++){
-        loadedModels[model_index]->setNodeMask(model_index == current_model_index ? 0xffffffff : 0x0); 
+        loadedModels[model_index]->setNodeMask(model_index == current_model_index ? 0xffffffff : 0x0);
         //std::cout<<"Model "<< model_index << " set :"<<(model_index == current_model_index ? "visible" : "invisible") <<std::endl;
     }
 }
@@ -93,24 +124,23 @@ bool Renderer::initialize(strvec fileNames,
   		double _fieldOfView = 25){
   	screenWidth = _screenWidth;
   	screenHeight = _screenHeight;
-
   	offScreen = _offScreen;
-    
+
     // osgUtil::Optimizer optimizer;
     osgUtil::Optimizer::TextureVisitor tv(true, false, false, false, false, false);
     osgUtil::SmoothingVisitor sv;
-   
+
     for (int fileIndex = 0; fileIndex < fileNames.size(); fileIndex++){
         // Return NULL on failure
         loadedModels.push_back(osgDB::readNodeFile(fileNames[fileIndex]));
-    	
+
         // Fail to load object
     	if (!loadedModels[fileIndex]){
     	    std::cout<<"Cannot load the model : " << fileNames[fileIndex] << std::endl;
             loadedModels.clear();
     	    return false;
     	}
-       
+
         // Optimizer
         // optimizer.optimize(loadedModels[fileIndex].get());
         // Texture
@@ -119,7 +149,7 @@ bool Renderer::initialize(strvec fileNames,
         loadedModels[fileIndex]->accept(sv);
         std::cout<<"Model Loaded:"<<fileNames[fileIndex]<<std::endl;
     }
-   
+
     // STD deep copy
     modelNames = fileNames;
 
@@ -145,31 +175,45 @@ bool Renderer::initialize(strvec fileNames,
   	// traits->alpha = 8;
   	std::cout << "DisplayName : " << traits->displayName() << std::endl;
   	traits->readDISPLAY();
-  
+
   	osg::GraphicsContext* _gc = osg::GraphicsContext::createGraphicsContext(traits.get());
   	// osg::DisplaySettings::instance()->setNumMultiSamples( 16 ); // Anti Aliasing
-  
+
   	if (!_gc) {
   		osg::notify(osg::NOTICE)<< "Failed to create pbuffer, failing back to normal graphics window." << std::endl;
   		traits->pbuffer = false;
   		_gc = osg::GraphicsContext::createGraphicsContext(traits.get());
   	}
-  
+
   	viewer->getCamera()->setGraphicsContext(_gc);
   	viewer->getCamera()->setViewport(0, 0, screenWidth, screenHeight);
   	viewer->getCamera()->setClearColor(osg::Vec4(1, 1, 1, 1));
   	viewer->getCamera()->getOrCreateStateSet()->setMode(GL_NORMALIZE, osg::StateAttribute::ON);
-  
+
   	osg::ref_ptr<osg::Hint> persCorrect = new osg::Hint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
   	viewer->getCamera()->getOrCreateStateSet()->setAttributeAndModes(persCorrect.get(),	osg::StateAttribute::ON);
   	// viewer->getCamera()->setCullingMode(osg::CullSettings::NO_CULLING);
-  	viewer->getCamera()->getView()->setLightingMode(osg::View::HEADLIGHT);
-  
+  	// viewer->getCamera()->getView()->setLightingMode(osg::View::HEADLIGHT);
+    // viewer->getCamera()->getView()->setLightingMode(osg::View::SKY_LIGHT);
+
   	sceneRoot = new osg::Group;
   	for(int modelIndex = 0; modelIndex < loadedModels.size(); modelIndex++){
         sceneRoot->addChild(loadedModels[modelIndex]);
     }
-  
+    //---------------------------------------------------------------------
+    // all nodes in the scene graph could benefit from the two light sources
+    // osg::LightSource* light0 = createLightSource(0, osg::Vec3(-20.0f, 0.0f, 0.0f), osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    // osg::LightSource* light1 = createLightSource(1, osg::Vec3(0.0f, -20.0f, 0.0f), osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    // osg::LightSource* light2 = createLightSource(1, osg::Vec3(0.0f, 0.0f, -20.0f), osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    // sceneRoot->getOrCreateStateSet()->setMode( GL_LIGHT0, osg::StateAttribute::ON);
+    // sceneRoot->getOrCreateStateSet()->setMode( GL_LIGHT1, osg::StateAttribute::ON);
+    // sceneRoot->getOrCreateStateSet()->setMode( GL_LIGHT2, osg::StateAttribute::ON);
+    // sceneRoot->addChild(light0);
+    // sceneRoot->addChild(light1);
+    // sceneRoot->addChild(light2);
+    //---------------------------------------------------------------------
+
+
   	//	osg::ref_ptr<osg::Light> light = new osg::Light;
   	//	osg::ref_ptr<osg::LightSource> lightSource = new osg::LightSource;
   	//	light->setAmbient(osg::Vec4(1.0,1.0,1.0,1.0));
@@ -177,19 +221,19 @@ bool Renderer::initialize(strvec fileNames,
   	//	light->setSpecular(osg::Vec4(1,1,1,1));
   	//	lightSource->setLight(light.get());
   	//	root->addChild(lightSource.get());
-  
+
   	viewer->setSceneData( sceneRoot.get() );
-  
+
   	///////////////////////////////////////////////////////
   	//          Set camera 								 //
   	///////////////////////////////////////////////////////
-      
+
   	for(int modelIndex = 0; modelIndex < loadedModels.size(); modelIndex++){
   	    boundingSpheres.push_back( loadedModels[modelIndex]->getBound() );
       	objectCenters.push_back( boundingSpheres[modelIndex].center() );
       	objectRadiuses.push_back( boundingSpheres[modelIndex].radius() );
     }
-  
+
     setModelIndex(0);
   	setViewpoint(_azimuth, _elevation, _yaw, _distance, _fieldOfView);
   	viewer->setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
@@ -204,11 +248,11 @@ bool Renderer::initialize(strvec fileNames,
 
 // Inefficient method to add a collection of models
 bool Renderer::addModel(std::string fileName){
-     
+
     osgUtil::Optimizer optimizer;
     osgUtil::Optimizer::TextureVisitor tv(true, false, false, false, false, false);
     osgUtil::SmoothingVisitor sv;
-   
+
     loadedModels.push_back(osgDB::readNodeFile(fileName));
     	// Fail to load object
    	if (!loadedModels.back()){
@@ -216,12 +260,12 @@ bool Renderer::addModel(std::string fileName){
             loadedModels.pop_back();
     		return false;
    	}
-        
+
     // optimizer.optimize(loadedModels.back().get());
     // loadedModels.back()->accept(tv);
     // Smooth faces
     // loadedModels.back()->accept(sv);
-    
+
     sceneRoot->addChild(loadedModels.back());
     modelNames.push_back(fileName);
 }
@@ -293,10 +337,6 @@ void Renderer::flipDepth(float * depthInput, int gWidth, int gHeight, double * d
 			depthOutput[i*gWidth+j] = depthInput[(gWidth-1-j)*gHeight+i];
 		}
 	}
-}
-
-strvec Renderer::getModelNames(){
-    return modelNames;
 }
 
 } /* namespace CLR */
