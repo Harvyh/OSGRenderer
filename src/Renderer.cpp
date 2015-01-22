@@ -73,11 +73,10 @@ void Renderer::setModelIndex(int _model_index){
 //    setViewpoint(_azimuth, _elevation, _yaw, _distance, _fieldOfView, current_model_index);
 //}
 
-void Renderer::setViewpoint(double _azimuth, double _elevation, double _yaw, double _distance, double _fieldOfView){
+void Renderer::setViewpoint(double _azimuth, double _elevation, double _yaw, double _distance_ratio, double _fieldOfView){
 	azimuth = _azimuth;
 	elevation = _elevation;
 	yaw = _yaw;
-	distance = _distance;
 	fieldOfView = _fieldOfView;
 
 	osg::Matrix rotx = osg::Matrix::rotate(elevation* PI/180.0f,osg::Vec3(1., 0., 0.));
@@ -86,9 +85,11 @@ void Renderer::setViewpoint(double _azimuth, double _elevation, double _yaw, dou
 
 	osg::Vec3 offset = rotz * rotx * osg::Vec3(0., -1., 0.);
 
-	if (distance <= 0){
-		distance = objectRadiuses[current_model_index] / tan(fieldOfView * PI/360.0f); // fieldOfView * PI/180 / 2
-	}
+    if (_distance_ratio <= 0 ){
+    	distance = objectRadiuses[current_model_index] / tan(fieldOfView * PI/360.0f); // fieldOfView * PI/180 / 2
+    } else {
+    	distance = _distance_ratio * objectRadiuses[current_model_index] / tan(fieldOfView * PI/360.0f); // fieldOfView * PI/180 / 2
+    }
 
 	osg::Vec3 eye = objectCenters[current_model_index] + osg::Vec3( distance * offset.x(), distance * offset.y(), distance * offset.z()) ;
 	osg::Vec3 up = rotz * roty * osg::Vec3(0.0f, 0.0f, 1.0f);
@@ -117,11 +118,11 @@ bool Renderer::initialize(strvec fileNames,
   		bool _offScreen,
   		int _screenWidth,
   		int _screenHeight,
-  		double _azimuth = 0,
-  		double _elevation = 0,
-  		double _yaw = 0,
-  		double _distance = 100,
-  		double _fieldOfView = 25){
+  		double _azimuth,
+  		double _elevation,
+  		double _yaw,
+  		double _distance,
+  		double _fieldOfView){
   	screenWidth = _screenWidth;
   	screenHeight = _screenHeight;
   	offScreen = _offScreen;

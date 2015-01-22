@@ -5,6 +5,11 @@
 % 
 % 1. change mexopts.sh and add '-std=c++11' to CXXFLAGS
 % 2. make('all','-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil');
+
+OSG_LIBRARY_PATH = '/usr/local/lib64';
+OSG_INCLUDE_PATH = '/usr/local/include/osg/';
+% If you use software rendering using MESA, add -L/path/to/mesa/ on make
+
 if ~exist('DEBUG','var')
     DEBUG = false;
 end
@@ -28,16 +33,12 @@ else
     mkdir('bin')
 end
 
-
 if isunix && ~ismac
-  % SW Rendering
-  % if SW rendering
-  % make(DEBUG_FLAG,'-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I./include/osg/ -L./lib/osg/ -L./lib/mesa/');
-  % 
   % if gcc version < 4.7
-  make(DEBUG_FLAG,'-v  CXXFLAGS=''-fPIC $CXXFLAGS -std=gnu++0x''','-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I/usr/local/include/osg/ -L/usr/local/lib64/');
+  make(DEBUG_FLAG,'-v  CXXFLAGS=''-fPIC $CXXFLAGS -std=gnu++0x''',...
+      ['-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I', OSG_INCLUDE_PATH, ' -L', OSG_LIBRARY_PATH]);
   % else
-  make(DEBUG_FLAG,'-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I./include/osg/');
+  % make(DEBUG_FLAG,'-lGL -lGLU -losg -losgDB -losgGA -losgViewer -losgUtil -I./include/osg/');
 end
 
 % For mac llvm
@@ -51,9 +52,10 @@ end
 % make('all','-v CXXFLAGS=''$CXXFLAGS -stdlib=libc++ -std=gnu++11''','-I/usr/local/include -L/usr/local/lib -lc++ -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads -lOpenThreads');
 
 if ismac
-  if verLessThan('matlab', '8.0.1')
+  if ~verLessThan('matlab', '8.0.1')
     make(DEBUG_FLAG,'-I/usr/local/include -L/usr/local/lib -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads');
   else
-    make(DEBUG_FLAG,'-v CXXFLAGS=''$CXXFLAGS -stdlib=libc++ -std=gnu++11''','-I/usr/local/include -L/usr/local/lib -lc++ -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads');
+    make(DEBUG_FLAG,'-v CXXFLAGS=''$CXXFLAGS -stdlib=libc++ -std=gnu++11''',...
+        '-I/usr/local/include -L/usr/local/lib -lc++ -losg -losgViewer -losgDB -losgGA -losgUtil -lOpenThreads');
   end
 end

@@ -11,16 +11,12 @@ distance = 0; fieldOfView = 25;
 
 % Setup Renderer
 renderer = Renderer();
-if ~renderer.initialize({'mesh/2012-VW-beetle-turbo.3ds', ...
-        'mesh/Honda-Accord.3ds',...
-        'mesh/untitled.dae'},700,700,45,0,0,0,25)
-    error('Renderer initilization failed');
-end
-
+renderer.initialize({'mesh/2012-VW-beetle-turbo.3ds',...
+                    'mesh/Honda-Accord.3ds'},...
+                    renderingSizeX,renderingSizeY)
 
 
 % If the output is only the rendering, it renders more efficiently
-renderer.setModelIndex(1);
 renderer.setViewpoint(azimuth,elevation,yaw,0,fieldOfView);
 [rendering]= renderer.render();
 subplot(221);

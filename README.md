@@ -18,6 +18,117 @@ There are two modes for installation. One that does not require OSG installation
 
 But I strongly recommend installing OSG from source file (see the first instruction)
 
+
+Example
+=======
+
+IPython Notebook Demo
+---------------------
+
+<http://nbviewer.ipython.org/gist/chrischoy/c1348f7d8bb5b941cc89>
+
+
+Matlab
+-----
+
+```matlab
+% Add binary path
+addpath('./bin');
+
+% Initialize the Matlab object.
+rendering_size_x = 700; rendering_size_y = 700; % pixels
+
+azimuth = 90; elevation = 10; yaw = 0;
+% Modify distance ratio to control distance from the object
+% distance_ratio = 1 is the default
+distance_ratio = 0; field_of_view = 25; 
+
+% Setup Renderer
+renderer = Renderer();
+renderer.initialize({'mesh/2012-VW-beetle-turbo.3ds', ...
+        'mesh/Honda-Accord.3ds'},...
+        rendering_size_x, rendering_size_y)
+
+% If the output is only the rendering, it renders more efficiently
+renderer.setModelIndex(1);
+renderer.setViewpoint(azimuth,elevation,yaw,distance_ratio,field_of_view);
+[rendering]= renderer.render();
+subplot(221);
+imagesc(rendering); axis equal; axis tight; axis off;
+
+
+% Once you initialized the renderer, you can just set 
+% the viewpoint and render without loading CAD model again.
+renderer.setModelIndex(2);
+renderer.setViewpoint(azimuth,elevation,yaw,distance_ratio,field_of_view);
+[rendering]= renderer.render();
+subplot(222);
+imagesc(rendering); axis equal; axis tight; axis off;
+
+
+
+% If you give the second output, it renders depth too.
+renderer.setModelIndex(1);
+renderer.setViewpoint(45,20,0,2,25);
+
+[rendering, depth]= renderer.render();
+subplot(223);imagesc(rendering); axis equal; axis off;
+subplot(224);imagesc(1-depth); axis equal; axis off; colormap hot;
+
+% Return viewmatrix
+renderer.getViewMatrix()
+
+% Return projection matrix
+renderer.getProjectionMatrix()
+
+% You must clear the memory before you exit
+renderer.delete(); clear renderer;
+```
+
+Output 
+
+![](https://dl.dropboxusercontent.com/u/57360783/MatlabRenderer/rendering_with_depth.png)
+
+
+Python
+------
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+from PyRenderer import Renderer
+
+viewport_size_x = 700
+viewport_size_y = 700
+
+azimuth = 0
+elevation = 0
+yaw = 0
+distance_ratio = 1
+field_of_view = 25
+
+x = Renderer()
+x.initialize(['mesh/2012-VW-beetle-turbo.3ds','mesh/Honda-Accord.3ds'],
+              viewport_size_x, viewport_size_y)
+
+# Render 
+x.setViewpoint(azimuth, elevation, yaw, distance_ratio, field_of_view)
+rendering, depth = x.render()
+
+# Flip dimension
+rendering = rendering.transpose((2,1,0))
+depth = depth.transpose((1,0))
+
+# image show
+plt.imshow(rendering)
+plt.show()
+
+# depth show
+plt.imshow(1-depth)
+plt.show()
+```
+
 Install : MATLAB Binding
 =======================
 
@@ -112,102 +223,6 @@ ISSUE
 2. If you use MATLAB < 2012b, make sure to use matlab libstdc++ library when compiling OSG.
 
 
-
-Usage: Matlab
------
-
-```matlab
-% Add binary path
-addpath('./bin');
-
-% Initialize the Matlab object.
-renderingSizeX = 700; renderingSizeY = 700; % pixels
-
-azimuth = 90; elevation = 10; yaw = 0;
-% if you use field of view, set distance to 0
-distance = 0; fieldOfView = 25; 
-
-
-% Setup Renderer
-renderer = Renderer();
-if ~renderer.initialize({'mesh/2012-VW-beetle-turbo.3ds', ...
-        'mesh/Honda-Accord.3ds',...
-        'mesh/untitled.dae'},700,700,45,0,0,0,25)
-    error('Renderer initilization failed');
-end
-
-
-
-% If the output is only the rendering, it renders more efficiently
-renderer.setModelIndex(1);
-renderer.setViewpoint(azimuth,elevation,yaw,0,fieldOfView);
-[rendering]= renderer.render();
-subplot(221);
-imagesc(rendering); axis equal; axis tight; axis off;
-
-
-% Once you initialized the renderer, you can just set 
-% the viewpoint and render without loading CAD model again.
-renderer.setModelIndex(2);
-renderer.setViewpoint(azimuth,elevation,yaw,0,fieldOfView);
-[rendering]= renderer.render();
-subplot(222);
-imagesc(rendering); axis equal; axis tight; axis off;
-
-
-
-% If you give the second output, it renders depth too.
-renderer.setModelIndex(1);
-renderer.setViewpoint(45,20,0,0,25);
-
-[rendering, depth]= renderer.render();
-subplot(223);imagesc(rendering); axis equal; axis off;
-subplot(224);imagesc(1-depth); axis equal; axis off; colormap hot;
-
-% Return viewmatrix
-renderer.getViewMatrix()
-
-% Return projection matrix
-renderer.getProjectionMatrix()
-
-% You must clear the memory before you exit
-renderer.delete(); clear renderer;
-```
-
-Output 
-
-![](https://dl.dropboxusercontent.com/u/57360783/MatlabRenderer/rendering_with_depth.png)
-
-
-Usage : Python Rendering
------------------------
-
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-%matplotlib inline
-from PyRenderer import Renderer
-x = Renderer()
-x.initialize(['mesh/Honda-Accord.3ds'], 1000, 1000, 25, 0, 0, 0, 0, 25)
-
-
-
-# Render 
-x.setViewpoint(45,20,0,0,25)
-rendering, depth = x.render()
-
-# Flip dimension
-rendering = rendering.transpose((2,1,0))
-depth = depth.transpose((1,0))
-
-# image show
-plt.imshow(rendering)
-plt.show()
-
-# depth show
-plt.imshow(1-depth)
-plt.show()
-```
 
 Input CAD format
 ----------------

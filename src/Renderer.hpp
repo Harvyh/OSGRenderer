@@ -70,11 +70,11 @@ public:
 			bool offScreen,
 			int _screenWidth,
 			int _screenHeight,
-			double _azimuth,
-			double _elevation,
-			double _yaw,
-			double _distance,
-			double _fieldOfView);
+			double _azimuth = 0,
+			double _elevation = 0,
+			double _yaw = 0,
+			double _distanre_ratio = 1,
+			double _fieldOfView = 25);
 
 	static void flipRenderingPy(GLubyte *imageInput, int gWidth , int gHeight, GLubyte *imageOutput);
 	static void flipRendering(GLubyte *imageInput, int gWidth , int gHeight, GLubyte *imageOutput);

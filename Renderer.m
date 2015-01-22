@@ -30,14 +30,14 @@ methods
     Renderer_('delete', this.id_);
   end
 
-  function success = initialize(this, filenames, screenWidth, screenHeight, azimuth, elevation, yaw, distance, fieldOfView)
+  function success = initialize(this, filenames, screenWidth, screenHeight)
   %Initialize initialize renderer.
     assert(isscalar(this));
     assert(~isempty(filenames));
     offScreen = 1;
-    success = Renderer_('initialize', this.id_, filenames, offScreen, screenWidth, screenHeight, azimuth, elevation, yaw, distance, fieldOfView);
+    success = Renderer_('initialize', this.id_, filenames, offScreen, screenWidth, screenHeight, 0, 0, 0, 1, 25);
     if (~success)
-        disp('Fail to initialize');
+        error('Renderer::Fail to initialize');
     end
   end
   
