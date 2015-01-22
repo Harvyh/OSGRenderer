@@ -25,8 +25,47 @@ Example
 IPython Notebook Demo
 ---------------------
 
-<http://nbviewer.ipython.org/gist/chrischoy/c1348f7d8bb5b941cc89>
+<http://nbviewer.ipython.org/gist/chrischoy/19f7765c401973d28243>
 
+
+Python
+------
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+from PyRenderer import Renderer
+
+viewport_size_x = 700
+viewport_size_y = 700
+
+azimuth = 0
+elevation = 0
+yaw = 0
+distance_ratio = 1
+field_of_view = 25
+
+x = Renderer()
+x.initialize(['mesh/2012-VW-beetle-turbo.3ds','mesh/Honda-Accord.3ds'],
+              viewport_size_x, viewport_size_y)
+
+# Render 
+x.setViewpoint(azimuth, elevation, yaw, distance_ratio, field_of_view)
+rendering, depth = x.render()
+
+# Flip dimension
+rendering = rendering.transpose((2,1,0))
+depth = depth.transpose((1,0))
+
+# image show
+plt.imshow(rendering)
+plt.show()
+
+# depth show
+plt.imshow(1-depth)
+plt.show()
+```
 
 Matlab
 -----
@@ -90,44 +129,6 @@ Output
 ![](https://dl.dropboxusercontent.com/u/57360783/MatlabRenderer/rendering_with_depth.png)
 
 
-Python
-------
-
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-%matplotlib inline
-from PyRenderer import Renderer
-
-viewport_size_x = 700
-viewport_size_y = 700
-
-azimuth = 0
-elevation = 0
-yaw = 0
-distance_ratio = 1
-field_of_view = 25
-
-x = Renderer()
-x.initialize(['mesh/2012-VW-beetle-turbo.3ds','mesh/Honda-Accord.3ds'],
-              viewport_size_x, viewport_size_y)
-
-# Render 
-x.setViewpoint(azimuth, elevation, yaw, distance_ratio, field_of_view)
-rendering, depth = x.render()
-
-# Flip dimension
-rendering = rendering.transpose((2,1,0))
-depth = depth.transpose((1,0))
-
-# image show
-plt.imshow(rendering)
-plt.show()
-
-# depth show
-plt.imshow(1-depth)
-plt.show()
-```
 
 Install : MATLAB Binding
 =======================
