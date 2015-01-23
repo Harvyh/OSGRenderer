@@ -1,23 +1,13 @@
 OpenSceneGraph Offscreen Renderer
 =========================
 
-[TOC]
+*Efficient object rendering engine for offscreen rendering using* [OpenSceneGraph 3](https://github.com/openscenegraph/osg)
 
+The renderer contains `python` and `matlab` bindings. The renderer is easy to use and caches CAD models so that it does not load the CAD model every time it renders.
 
-Efficient Object Rendering Engine for Offscreen rendering using [OpenSceneGraph 3](https://github.com/openscenegraph/osg).
+The C++ object is cached using [Mexplus](https://github.com/kyamagu/mexplus), and the matlab wrapper holds the C++ class instance until a user destroys the instance. The Renderer object remains on the memory, and it contains all the loaded CAD models and returns data to MATLAB or python directly. Thus it is optimal for on-the-fly rendering or visualization.
 
-It contains `python` and `matlab` bindings. The rendering is easy to use and cache CAD models so that it does not load CAD model every time it renders
-
-The C++ object is cached using [Mexplus](https://github.com/kyamagu/mexplus) and the matlab wrapper holds the C++ object instance 
-
-until a user destroy. The Renderer object remains on memory and it contains all the loaded CAD models and returns data to MATLAB or python directly. 
-
-Thus it is optimal for on-the-fly rendering or visualization. 
-
-There are two modes for installation. One that does not require OSG installation which is recommended and the one that works without OSG installation using prebuilt OSG libraries provided in this repo.
-
-But I strongly recommend installing OSG from source file (see the first instruction)
-
+There are two modes for installation: one that require OSG installation, which is recommended, and one that works without OSG installation using prebuilt OSG libraries provided in this repo.
 
 Example
 =======
