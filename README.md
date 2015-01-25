@@ -158,7 +158,7 @@ Install : Prebuild (Linux Only)
     
     ```
     cd OSGRenderer
-    export LIBRARY_PATH=LIBRARY_PATH:path/to/OSGRenderer/lib/osg/:path/to/OSGRenderer/lib/boost/
+    export LIBRARY_PATH=$LIBRARY_PATH:path/to/OSGRenderer/lib/osg/:path/to/OSGRenderer/lib/boost/
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:path/to/OSGRenderer/lib/osg:path/to/OSGRenderer/lib/boost/
     ```
     
