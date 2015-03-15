@@ -73,7 +73,8 @@ void Renderer::setModelIndex(int _model_index){
 //    setViewpoint(_azimuth, _elevation, _yaw, _distance, _fieldOfView, current_model_index);
 //}
 
-void Renderer::setViewpoint(double _azimuth, double _elevation, double _yaw, double _distance_ratio, double _fieldOfView){
+void Renderer::setViewpoint(double _azimuth, double _elevation, double _yaw, double _distance_ratio, double _fieldOfView,
+  double _offset_x, double _offset_y, double _offset_z){
 	azimuth = _azimuth;
 	elevation = _elevation;
 	yaw = _yaw;
@@ -83,7 +84,9 @@ void Renderer::setViewpoint(double _azimuth, double _elevation, double _yaw, dou
 	osg::Matrix roty = osg::Matrix::rotate(yaw* PI/180.0f, 		osg::Vec3(0., 1., 0.));
 	osg::Matrix rotz = osg::Matrix::rotate(azimuth* PI/180.0f, 	osg::Vec3(0., 0., 1.));
 
-	osg::Vec3 offset = rotz * rotx * osg::Vec3(0., -1., 0.);
+	//osg::Vec3 offset = rotz * rotx * osg::Vec3(0., -1., 0.);
+  osg::Vec3 offset = rotz * roty * rotx * osg::Vec3(0., -1., 0.);
+  //osg::Vec3 offset = rotz * rotx * osg::Vec3(0. + _offset_x, -1. + _offset_y, 0. + _offset_z);
 
     if (_distance_ratio <= 0 ){
     	distance = objectRadiuses[current_model_index] / tan(fieldOfView * PI/360.0f); // fieldOfView * PI/180 / 2
@@ -92,8 +95,14 @@ void Renderer::setViewpoint(double _azimuth, double _elevation, double _yaw, dou
     }
 
 	osg::Vec3 eye = objectCenters[current_model_index] + osg::Vec3( distance * offset.x(), distance * offset.y(), distance * offset.z()) ;
-	osg::Vec3 up = rotz * roty * osg::Vec3(0.0f, 0.0f, 1.0f);
-	osg::Matrix m = osg::Matrix::lookAt(eye, objectCenters[current_model_index], up);
+  // eye = eye + osg::Vec3( _offset_x, _offset_y, _offset_z);
+	//osg::Vec3 up = rotz * roty * osg::Vec3(0.0f, 0.0f, 1.0f);
+  osg::Vec3 up = rotz * roty * rotx * osg::Vec3(0.0f, 0.0f, 1.0f);
+
+	osg::Vec3 tmp_offset_obj = rotz * roty * rotx * osg::Vec3( _offset_x,  0, _offset_z); 
+  osg::Vec3 tmp_offset_eye = rotz * roty * rotx * osg::Vec3( 0,  _offset_y, 0); 
+
+  osg::Matrix m = osg::Matrix::lookAt(eye - tmp_offset_eye, objectCenters[current_model_index] + tmp_offset_obj, up);
 
 	viewer->getCamera()->setViewMatrix( m );
 	viewer->getCamera()->setProjectionMatrixAsPerspective( (fieldOfView <= 0)?25:fieldOfView, 1, 1 ,100000);
@@ -236,7 +245,7 @@ bool Renderer::initialize(strvec fileNames,
     }
 
     setModelIndex(0);
-  	setViewpoint(_azimuth, _elevation, _yaw, _distance, _fieldOfView);
+  	setViewpoint(_azimuth, _elevation, _yaw, _distance, _fieldOfView,0,0,0);
   	viewer->setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
   	viewer->setUpThreading();
   	viewer->realize();

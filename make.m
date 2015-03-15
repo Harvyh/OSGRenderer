@@ -16,6 +16,7 @@ function make(command, varargin)
 %
   if nargin < 1, command = 'all'; end
   root_dir = fileparts(mfilename('fullpath'));
+  % root_dir = '/home/zhianghu/Desktop/Ford/Synthetic/OSGRenderer';
   switch command
     case 'debug'
       targets = [getTarget(root_dir)];

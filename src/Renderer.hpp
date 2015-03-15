@@ -89,7 +89,10 @@ public:
 			double _elevation,
 			double _yaw,
 			double _distance,
-			double _fieldOfView);
+			double _fieldOfView,
+			double _offset_x,
+			double _offset_y,
+			double _offset_z);
     const osg::Matrixd& getViewMatrix();
     const osg::Matrixd& getProjectionMatrix();
 
